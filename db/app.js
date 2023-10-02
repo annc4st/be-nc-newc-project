@@ -2,7 +2,6 @@ const express = require('express');
 const {getTopics} = require('../controllers/controllers.js');
 
 
-
 const app = express();
 
 
@@ -20,7 +19,7 @@ app.all('/*',(request, response) =>{
     console.log(response)
     response.status(404).send({ message: 'path is not found'})
   })
-  
+
 //Error handling
 app.use((err, req, res, next) => {
     if (err.status) {

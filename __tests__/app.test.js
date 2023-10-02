@@ -26,7 +26,7 @@ describe('General testing', () => {
     });
 })
 
-describe.only('GET /api/topics', () =>{
+describe('GET /api/topics', () =>{
     test('responds with status 200', () =>{
         return request(app)
         .get('/api/topics')
@@ -37,6 +37,7 @@ describe.only('GET /api/topics', () =>{
         return request(app)
         .get('/api/topics')
         .then(({body}) => {
+            expect(body.topics).toHaveLength(3)
             body.topics.forEach((topic) => {
                 expect(typeof(topic.description)).toBe('string');
                 expect(typeof(topic.slug)).toBe('string')

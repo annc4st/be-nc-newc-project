@@ -7,5 +7,4 @@ exports.getTopics = (req, res, next) => {
     .catch((error) => {
         next(error);
     })
-
 };
