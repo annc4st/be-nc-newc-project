@@ -1,11 +1,8 @@
 const express = require('express');
 const {getTopics, getEndPoints} = require('../controllers/controllers.js');
-const fs = require('fs');
+
 
 const app = express();
-
-
-app.use(express.json());
 
 app.get('/api/topics', getTopics);
 
@@ -27,6 +24,8 @@ app.use((err, req, res, next) => {
       res.status(500).send({ message: 'Internal server error' });
     }
   });
+
+
 
 
 module.exports = app;
