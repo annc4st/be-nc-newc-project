@@ -41,3 +41,21 @@ describe('GET /api/topics', () =>{
         })
     });
 })
+/*3*/
+describe('GET /api/', () =>{
+    test('responds with status 200 and object of available endpoints', () => {
+        return request(app)
+        .get('/api')
+        .expect(200)
+        .then(({body}) => {
+           
+            expect(typeof(body)).toBe('object')
+            //dynamically test all endpoints and their descriptions 
+            for (const [endpoint, info] of Object.entries(body)) {
+                expect(info.description).toBeDefined();
+            }
+
+        })
+    })
+});
+

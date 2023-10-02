@@ -1,17 +1,12 @@
 const express = require('express');
-const {getTopics} = require('../controllers/controllers.js');
+const {getTopics, getEndPoints} = require('../controllers/controllers.js');
 
 
 const app = express();
 
-
-
 app.get('/api/topics', getTopics);
 
-
-
-
-
+app.get('/api', getEndPoints);
 
 
 
@@ -29,6 +24,8 @@ app.use((err, req, res, next) => {
       res.status(500).send({ message: 'Internal server error' });
     }
   });
+
+
 
 
 module.exports = app;
