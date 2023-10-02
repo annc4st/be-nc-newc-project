@@ -27,15 +27,11 @@ describe('General testing', () => {
 })
 
 describe('GET /api/topics', () =>{
-    test('responds with status 200', () =>{
+    test('responds with status 200 and array of topics', () =>{
         return request(app)
         .get('/api/topics')
         .expect(200)
-    });
-
-    test('returns array of topics', () =>{
-        return request(app)
-        .get('/api/topics')
+    
         .then(({body}) => {
             expect(body.topics).toHaveLength(3)
             body.topics.forEach((topic) => {
