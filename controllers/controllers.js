@@ -1,7 +1,9 @@
 const {fetchTopics} = require('../models/models.js');
-const fs = require('fs');
+ 
+const fs = require('fs/promises');
 const endPointFile = require('../endpoints.json');
 const path = require('path');
+
 
 
 exports.getTopics = (req, res, next) => {
@@ -14,15 +16,16 @@ exports.getTopics = (req, res, next) => {
 };
 
 exports.getEndPoints = (req, res, next) => {
-    const endpointsPath = path.join(__dirname, '../endpoints.json'); 
-    fs.readFile(endpointsPath, 'utf8', (err, data) => {
-        if (err) {
-          console.error('Error reading endpoints.json:', err);
-          res.status(500).send({ message: 'Internal server error' });
-        } else {
-          const endpoints = JSON.parse(data);
-          console.log(endpoints)
-          res.status(200).send(endpoints);
-        }
-      });
-    };
+    const endpointsPath = path.join(__dirname, '../endpoints.json');
+
+    fs.readFile(endpointsPath, 'utf8')
+    .then((data) => {
+      const endpoints = JSON.parse(data);
+      res.status(200).send(endpoints);
+    })
+    .catch((error) => {
+        next(error);
+    })
+};
+
+ 

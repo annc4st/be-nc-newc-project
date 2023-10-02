@@ -1,5 +1,7 @@
 const db = require('../db/connection.js');
 
+const path = require('path');
+
 
 exports.fetchTopics = () => {
     return db.query(
@@ -10,3 +12,5 @@ exports.fetchTopics = () => {
     })
 };
 
+ 
+    
