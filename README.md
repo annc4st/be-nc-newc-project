@@ -1,7 +1,5 @@
 # Northcoders News API
 
-For instructions, please head over to [L2C NC News](https://l2c.northcoders.com/courses/be/nc-news).
-
 Instructions on how to create the environment variables for anyone who wishes to clone this project and run it locally.
 
 You have to create .env.development and .env.test files, include there db variables:
