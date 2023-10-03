@@ -10,7 +10,7 @@ exports.fetchTopics = () => {
         return rows
     })
 };
-//future challenge here is util function that can be reused => to incorporate in other funcs
+//future challenge here is util function that can be reused => to incorporate in other
 exports.checkArticleExists = async(article_id) => {
     const dbOutput = await db
     .query(
@@ -57,6 +57,20 @@ exports.selectArticleComments = (articleId) => {
     `,  [articleId])
     .then((result) => {
         return result.rows;
+    })
+}
+//7
+exports.insertComment = (newComment, id) =>{
+    const {username, body} = newComment;
+    
+    return db
+    .query('INSERT INTO comments (author, body, article_id) VALUES ($1, $2, $3 ) RETURNING *;', [username, body, id])
+
+    .then((result) => {
+        return result.rows[0];
+    })
+    .catch((error) => {
+        next(error);
     })
 }
    

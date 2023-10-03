@@ -48,7 +48,6 @@ describe('GET /api/', () =>{
         .get('/api')
         .expect(200)
         .then(({body}) => {
-           console.log(body);
             expect(typeof(body)).toBe('object')
             //dynamically test all endpoints and their descriptions 
             for (const [endpoint, info] of Object.entries(body)) {
@@ -158,7 +157,7 @@ describe('GET /api/articles/:article_id/comments', () => {
         })
     })
 
-    test('if there is no such article ', () => {
+    test('if there is no such article responds with 404 and message', () => {
         return request(app)
         .get('/api/articles/3723/comments')
         .expect(404)
@@ -173,6 +172,46 @@ describe('GET /api/articles/:article_id/comments', () => {
         .then(({body}) => {
             expect(body.message).toBe('Invalid input syntax')
         })
-    })
+    });
 })
+describe('POST /api/articles/:article_id/comments', () => {
+    test('POST comment, we get the 201 response', () => {
+        const newComment = {
+            username: 'butter_bridge',
+            body: 'I love treasure hunting!'
+        }
+
+        return request(app)
+        
+          .post(`/api/articles/1/comments`)
+          .send(newComment)
+          .expect(201)
+          .then((response) => {
+            const {comment} = response.body; 
+          
+            expect(comment.comment_id).toEqual(expect.any(Number))
+            expect(comment.author).toEqual("butter_bridge")
+            expect(comment.article_id).toEqual(1)
+            expect(comment.body).toEqual('I love treasure hunting!')
+
+            })
+        })
+       
+
+        test('POST comment 400 responds with an appropriate status and error message when provided with a no comment body', () => {
+            const newComment = {
+                username: "butter_bridge"
+            }
+            
+            return request(app)
+            .post(`/api/articles/1/comments`)
+            .send(newComment)
+            .expect(400)
+            .then((response) => {
+                expect(response.body.message).toEqual('Comment body cannot be empty');
+              })
+          });
+    });
+
+
 
