@@ -43,12 +43,14 @@ fetchArticleById(article_id).then((article) => {
 exports.getArticles = (req, res, next) => {
 
     fetchArticles().then((articles) => {
-        console.log("in controllers: ", articles)
         res.status(200).send({articles})
     })
     .catch((error) => {
         next(error)
     })
 };
+ 
+
+
 
  
