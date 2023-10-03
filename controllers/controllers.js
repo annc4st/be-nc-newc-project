@@ -1,4 +1,8 @@
-const {fetchTopics, fetchArticleById, fetchArticles} = require('../models/models.js');
+const {
+    fetchTopics, fetchArticleById, fetchArticles,
+    selectArticleComments
+    
+} = require('../models/models.js');
  
 const fs = require('fs/promises');
 
@@ -49,6 +53,30 @@ exports.getArticles = (req, res, next) => {
         next(error)
     })
 };
+//6
+exports.getCommentsForArticle = (req, res, next) => {
+    const {article_id} = req.params;
+
+    return fetchArticleById(article_id)
+    .then((article) => {
+        
+      if (!article) {
+        return res.status(404).send({ message: 'Article not found' });
+      
+      } else {
+        return selectArticleComments(article_id)
+      }
+    })
+    .then((comments) => {
+        res.status(200).send({comments})
+    })
+    .catch((error) => {
+        next(error)
+    })
+}
+
+
+
  
 
 

@@ -98,7 +98,7 @@ describe('GET /api/articles/:article_id', () => {
 });
 
 //5
-describe.only('GET /api/articles responds with array of articles', () => {
+describe('GET /api/articles responds with array of articles', () => {
     test('GET:200 sends an appropriate status and article array', () => {
         return request(app)
         .get('/api/articles')
@@ -135,5 +135,35 @@ describe.only('GET /api/articles responds with array of articles', () => {
             expect(response.body.message).toBe('path is not found')
         })
     });
+})
+
+//6
+describe.only('GET /api/articles/:article_id/comments', () => {
+    test.only('if there are comments sends an appropriate status and comments array', () => {
+        return request(app)
+        .get('/api/articles/1/comments')
+        .expect(200)
+        .then(({body}) => {
+            console.log(body.comments)
+            expect(body.comments.length).toBe(11)
+        })
+    });
+    test('if there are no comments sends 200 status and empty array', () => {
+        return request(app)
+        .get('/api/articles/2/comments')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.comments).toEqual([])
+        })
+    })
+
+    test('if there is no such article ', () => {
+        return request(app)
+        .get('/api/articles/3723/comments')
+        .expect(404)
+        .then(({body}) => {
+            expect(body.message).toBe("Article not found")
+        })
+    })
 })
 
