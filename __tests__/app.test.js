@@ -48,7 +48,7 @@ describe('GET /api/', () =>{
         .get('/api')
         .expect(200)
         .then(({body}) => {
-           
+           console.log(body);
             expect(typeof(body)).toBe('object')
             //dynamically test all endpoints and their descriptions 
             for (const [endpoint, info] of Object.entries(body)) {
@@ -84,7 +84,8 @@ describe('GET /api/articles/:article_id', () => {
         .get('/api/articles/111111')
           .expect(404)
           .then(({body}) => {
-            expect(body.message).toBe('item does not exist');
+        
+            expect(body.message).toBe("item does not exist");
           });
       });
       test('GET:400 sends an appropriate status and error message when given an invalid id', () => {
@@ -138,13 +139,13 @@ describe('GET /api/articles responds with array of articles', () => {
 })
 
 //6
-describe.only('GET /api/articles/:article_id/comments', () => {
-    test.only('if there are comments sends an appropriate status and comments array', () => {
+describe('GET /api/articles/:article_id/comments', () => {
+    test('if there are comments sends an appropriate status and comments array', () => {
         return request(app)
         .get('/api/articles/1/comments')
         .expect(200)
         .then(({body}) => {
-            console.log(body.comments)
+         
             expect(body.comments.length).toBe(11)
         })
     });
@@ -162,7 +163,15 @@ describe.only('GET /api/articles/:article_id/comments', () => {
         .get('/api/articles/3723/comments')
         .expect(404)
         .then(({body}) => {
-            expect(body.message).toBe("Article not found")
+            expect(body.message).toBe("item does not exist")
+        })
+    });
+    test('if there not valid article id was provided => 400 code ', () => {
+        return request(app)
+        .get('/api/articles/notID/comments')
+        .expect(400)
+        .then(({body}) => {
+            expect(body.message).toBe('Invalid input syntax')
         })
     })
 })

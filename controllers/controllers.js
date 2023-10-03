@@ -40,7 +40,7 @@ fetchArticleById(article_id).then((article) => {
 	res.status(200).send({article})
 })
 .catch((error) => {
-   next(error);
+    next(error);
 })
 }
 //5
