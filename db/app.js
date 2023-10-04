@@ -20,7 +20,7 @@ app.get('/api/articles/:article_id/comments', getCommentsForArticle);
 //7
 app.post('/api/articles/:article_id/comments', postComment);
 //8
-// app.patch('/api/articles/:article_id', patchArticle);
+app.patch('/api/articles/:article_id', patchArticle);
 
 
 

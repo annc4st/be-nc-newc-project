@@ -4,7 +4,6 @@ const {
   fetchArticles,
   selectArticleComments,
   insertComment,
-  checkUsernameExists, checkArticleExists,
   updateArticle
 } = require("../models/models.js");
 
@@ -92,19 +91,27 @@ exports.postComment = (req, res, next) => {
         res.status(201).send({ comment });
     })
     .catch((error) => {
-        console.log(error);
         next(error);
     })
 };
-/*
+
 //8 an object in the form { inc_votes: newVote }
 exports.patchArticle = (req, res, next) => {
-    const { article_id } = req.params;
-    const {inc_votes}= req.body;
+    
+      const article_id=  req.params.article_id;
+      const inc_votes = req.body.inc_votes;
+   
 
-    updateArticle(article_id, update)
-}
+    return updateArticle(article_id, inc_votes)
+    .then((article) => {
+        res.status(200).send({article});
+    })
+    .catch((error) => {
+
+        next(error);
+    })
+};
 
 
-*/
+
 
