@@ -175,7 +175,7 @@ describe('GET /api/articles/:article_id/comments', () => {
     });
 })
 
-
+//7
 describe('POST /api/articles/:article_id/comments', () => {
     test('POST comment, we get the 201 response', () => {
         const newComment = {
@@ -212,7 +212,7 @@ describe('POST /api/articles/:article_id/comments', () => {
               })
           });
 
-          test('POST comment 400 responds with an appropriate status and error message when provided with a no username', () => {
+          test('POST 400 responds with an appropriate status and error message when provided with a no username', () => {
             const newComment = {
                 body: 'this is test for a username missing from a comment'
             }
@@ -226,7 +226,7 @@ describe('POST /api/articles/:article_id/comments', () => {
               })
           });
 
-          test('404, username does not exist',  () => {
+          test('POST 404, username does not exist',  () => {
             const newComment = {
                 username: "iDonotExist",
                 body: 'this is test for a username missing from a comment'
@@ -252,6 +252,7 @@ describe('POST /api/articles/:article_id/comments', () => {
             .send(newComment)
             .expect(404)
             .then(({body}) => {
+                console.log(body)
                 expect(body.message).toBe("Article does not exist")
         })
     });
@@ -268,10 +269,29 @@ describe('POST /api/articles/:article_id/comments', () => {
     .then(({body}) => {
         expect(body.message).toBe('Invalid article_id' )
         })
-    });
-
-        
+    });  
 });
+
+//8
+// describe('PATCH /api/articles/:article_id', () => {
+//     test('200: responds with updated article', () => {
+//         return request(app)
+//         .patch('/api/articles/:article_id')
+//         .expect(200)
+//         .then(({body}) => {
+//             expect(body.article).toMatchObject({
+//                 article_id: 1,
+//                 title: "Living in the shadow of a great man",
+//                 topic: "mitch",
+//                 mitch: "butter_bridge",
+//                 created_at: "2020-07-09 21:11:00",
+//                 votes: 99,
+//                 article_img_url: "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+
+//             })
+//         })
+//     })
+// })
 
 
 

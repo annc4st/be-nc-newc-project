@@ -1,7 +1,7 @@
 const express = require('express');
 const {
   getTopics, getEndPoints, getArticleById, getArticles,
-  getCommentsForArticle, postComment
+  getCommentsForArticle, postComment, patchArticle
 } = require('../controllers/controllers.js');
 
 
@@ -19,6 +19,8 @@ app.get('/api/articles', getArticles);
 app.get('/api/articles/:article_id/comments', getCommentsForArticle);
 //7
 app.post('/api/articles/:article_id/comments', postComment);
+//8
+// app.patch('/api/articles/:article_id', patchArticle);
 
 
 
@@ -31,15 +33,18 @@ app.all('/*',(request, response) =>{
 
 
 //Error handling
-app.use((err, req, res, next) => {
-  if (err.code === '22P02') {
+app.use((error, req, res, next) => {
+  if (error.code === '22P02') {
     res.status(400).send({ message: 'Invalid input syntax'})
   }
 
-    if (err.status) {
-      res.status(err.status).send({ message: err.message });
+    if (error.status && error.message) {
+      res.status(error.status).send({ message: error.message });
     } 
     else {
+       // if the error hasn't been identified,
+    // respond with an internal server error
+      console.log(error);
       res.status(500).send({ message: 'Internal server error' });
     }
   });
