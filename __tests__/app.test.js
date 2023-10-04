@@ -174,6 +174,8 @@ describe('GET /api/articles/:article_id/comments', () => {
         })
     });
 })
+
+
 describe('POST /api/articles/:article_id/comments', () => {
     test('POST comment, we get the 201 response', () => {
         const newComment = {
@@ -193,10 +195,8 @@ describe('POST /api/articles/:article_id/comments', () => {
             expect(comment.author).toEqual("butter_bridge")
             expect(comment.article_id).toEqual(1)
             expect(comment.body).toEqual('I love treasure hunting!')
-
             })
         })
-       
 
         test('POST comment 400 responds with an appropriate status and error message when provided with a no comment body', () => {
             const newComment = {
@@ -208,10 +208,70 @@ describe('POST /api/articles/:article_id/comments', () => {
             .send(newComment)
             .expect(400)
             .then((response) => {
-                expect(response.body.message).toEqual('Comment body cannot be empty');
+                expect(response.body.message).toEqual('Comment body and username cannot be empty' );
               })
           });
+
+          test('POST comment 400 responds with an appropriate status and error message when provided with a no username', () => {
+            const newComment = {
+                body: 'this is test for a username missing from a comment'
+            }
+            
+            return request(app)
+            .post(`/api/articles/1/comments`)
+            .send(newComment)
+            .expect(400)
+            .then((response) => {
+                expect(response.body.message).toEqual('Comment body and username cannot be empty' );
+              })
+          });
+
+          test('404, username does not exist',  () => {
+            const newComment = {
+                username: "iDonotExist",
+                body: 'this is test for a username missing from a comment'
+            }
+            
+            return request(app)
+            .post(`/api/articles/1/comments`)
+            .send(newComment)
+            .expect(404)
+            .then((response) => {
+                expect(response.body.message).toEqual('Username does not exist' );
+              })
+          });
+
+          test('if there is no such article responds with 404 and message', () => {
+                const newComment = {
+                username: "rogersop",
+                body: 'this is test for a username missing from a comment'
+            }
+            
+            return request(app)
+            .post(`/api/articles/654654/comments`)
+            .send(newComment)
+            .expect(404)
+            .then(({body}) => {
+                expect(body.message).toBe("Article does not exist")
+        })
     });
+    test('if there is article_id is not valid responds with 400', () => {
+        const newComment = {
+        username: "rogersop",
+        body: 'this is test for a username missing from a comment'
+    }
+    
+    return request(app)
+    .post(`/api/articles/notID/comments`)
+    .send(newComment)
+    .expect(400)
+    .then(({body}) => {
+        expect(body.message).toBe('Invalid article_id' )
+        })
+    });
+
+        
+});
 
 
 

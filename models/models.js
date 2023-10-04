@@ -2,6 +2,8 @@ const db = require('../db/connection.js');
 
 
 
+
+
 exports.fetchTopics = () => {
     return db.query(
         `SELECT * FROM topics`
@@ -10,17 +12,24 @@ exports.fetchTopics = () => {
         return rows
     })
 };
-//future challenge here is util function that can be reused => to incorporate in other
+
 exports.checkArticleExists = async(article_id) => {
-    const dbOutput = await db
-    .query(
+    return db.query(
         `SELECT * FROM articles WHERE article_id = $1;`, [article_id]
-        ); 
-    if (dbOutput.rows.length === 0) {
-        return Promise.reject({ status: 404,  message: "item does not exist"});
-    }
-    return dbOutput.rows[0];
+        )
+        .then((result) => {
+            return result.rows.length > 0;
+        })
 }
+
+
+exports.checkUsernameExists = (username) => {
+    return db.query('SELECT username FROM users WHERE username = $1;', [username])
+      .then((result) => {
+       
+        return result.rows.length > 0;
+      });
+  };
  
 exports.fetchArticleById = (id) => {
     return db
@@ -62,15 +71,12 @@ exports.selectArticleComments = (articleId) => {
 //7
 exports.insertComment = (newComment, id) =>{
     const {username, body} = newComment;
-    
+
     return db
     .query('INSERT INTO comments (author, body, article_id) VALUES ($1, $2, $3 ) RETURNING *;', [username, body, id])
 
     .then((result) => {
         return result.rows[0];
-    })
-    .catch((error) => {
-        next(error);
     })
 }
    

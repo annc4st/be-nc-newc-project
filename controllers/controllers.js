@@ -4,6 +4,7 @@ const {
   fetchArticles,
   selectArticleComments,
   insertComment,
+  checkUsernameExists, checkArticleExists
 } = require("../models/models.js");
 
 const fs = require("fs/promises");
@@ -75,13 +76,29 @@ exports.getCommentsForArticle = (req, res, next) => {
 };
 //7
 exports.postComment = (req, res, next) => {
-    const { article_id } = req.params;
-    
+  const { article_id } = req.params;
   const newComment = req.body;
-  if (!newComment.body) { 
-    return res.status(400).send({ message: 'Comment body cannot be empty' });
-  }
-  insertComment(newComment, article_id)
+  if (!newComment.body || !newComment.username) { 
+    return res.status(400).send({ message: 'Comment body and username cannot be empty' });
+    }  
+    if (isNaN(article_id)) {
+        return res.status(400).send({ message: 'Invalid article_id' });
+      }
+
+    Promise.all([
+        checkUsernameExists(newComment.username),
+        checkArticleExists(article_id)
+      ])
+      .then(([usernameExists, articleExists]) => {
+        if (!usernameExists) {
+            return res.status(404).send({ message: 'Username does not exist' });
+        }
+        if (!articleExists) {
+            return res.status(404).send({ message: "Article does not exist" });
+          }
+      })
+ 
+  return insertComment(newComment, article_id)
     .then((comment) => {
         res.status(201).send({ comment });
     })

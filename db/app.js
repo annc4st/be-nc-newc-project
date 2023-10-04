@@ -32,11 +32,6 @@ app.all('/*',(request, response) =>{
 
 //Error handling
 app.use((err, req, res, next) => {
-  //Since we have sent a promise reject in models.js with a status code and a message this should be pciked up by your if(err.status)
-  // if (res.statusCode === 404) {
-  //   res.status(404).send({ message: "item is not found" })
-  // }
-
   if (err.code === '22P02') {
     res.status(400).send({ message: 'Invalid input syntax'})
   }
