@@ -226,27 +226,26 @@ describe('POST /api/articles/:article_id/comments', () => {
               })
           });
 
-          test('POST 404, username does not exist',  () => {
-            const newComment = {
-                username: "iDonotExist",
-                body: 'this is test for a username missing from a comment'
-            }
-            
-            return request(app)
-            .post(`/api/articles/1/comments`)
-            .send(newComment)
-            .expect(404)
-            .then((response) => {
-                expect(response.body.message).toEqual('Username does not exist' );
-              })
-          });
+        //delete test for username does not exist
+        //   test('POST 404, username does not exist',  () => {
+        //     const newComment = {
+        //         username: "iDonotExist",
+        //         body: 'this is test for a username missing from a comment'
+        //     }
+        //     return request(app)
+        //     .post(`/api/articles/1/comments`)
+        //     .send(newComment)
+        //     .expect(404)
+        //     .then((response) => {
+        //         expect(response.body.message).toEqual('Username does not exist' );
+        //       })
+        //   });
 
           test('if there is no such article responds with 404 and message', () => {
-                const newComment = {
+            const newComment = {
                 username: "rogersop",
                 body: 'this is test for a username missing from a comment'
             }
-            
             return request(app)
             .post(`/api/articles/654654/comments`)
             .send(newComment)
@@ -261,14 +260,13 @@ describe('POST /api/articles/:article_id/comments', () => {
         username: "rogersop",
         body: 'this is test for a username missing from a comment'
     }
-    
-    return request(app)
-    .post(`/api/articles/notID/comments`)
-    .send(newComment)
-    .expect(400)
-    .then(({body}) => {
-        expect(body.message).toBe('Invalid article_id' )
-        })
+        return request(app)
+        .post(`/api/articles/notID/comments`)
+        .send(newComment)
+        .expect(400)
+        .then(({body}) => {
+            expect(body.message).toBe('Invalid article_id' )
+            })
     });  
 });
 
@@ -340,6 +338,17 @@ describe('PATCH /api/articles/:article_id', () => {
             expect(body.message).toEqual("Invalid votes increment")   
         })
     });
+
+    test('400: invalid article ID NaN', () => {
+        const articleUpdate = { inc_votes : "not-a-Number" }
+        return request(app)
+        .patch('/api/articles/not-a-Number')
+        .send(articleUpdate)
+        .expect(400)
+        .then(({body}) => {
+            expect(body.message).toEqual('Invalid article_id')   
+        })
+    })
 
 })
 

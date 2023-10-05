@@ -19,18 +19,18 @@ checkArticleExists = async (article_id) => {
 };
 module.exports.checkArticleExists = checkArticleExists;
 
-checkUsernameExists = async (username) => {
-  return db.query(
-    "SELECT username FROM users WHERE username = $1;", [username])
-    .then((result) => {
+// checkUsernameExists = async (username) => {
+//   return db.query(
+//     "SELECT username FROM users WHERE username = $1;", [username])
+//     .then((result) => {
 
-        if(result.rows.length === 0) {
-            return Promise.reject({ status: 404, message: 'Username does not exist'});
-        }
-      return result.rows[0];
-    })
-};
-module.exports.checkUsernameExists = checkUsernameExists;
+//         if(result.rows.length === 0) {
+//             return Promise.reject({ status: 404, message: 'Username does not exist'});
+//         }
+//       return result.rows[0];
+//     })
+// };
+// module.exports.checkUsernameExists = checkUsernameExists;
 
 exports.fetchArticleById = (id) => {
   return db
@@ -76,13 +76,13 @@ exports.insertComment = (newComment, id) => {
   const { username, body } = newComment;
 
   return Promise.all([
-    checkUsernameExists(newComment.username),
+    // checkUsernameExists(newComment.username),
     checkArticleExists(id)
   ])
-    .then(([usernameExists, articleExists]) => {
-      if (!usernameExists) {
-        return Promise.reject({ status: 404, message:'Username does not exist' });
-      }
+    .then(([articleExists]) => {
+      // if (!usernameExists) {
+      //   return Promise.reject({ status: 404, message:'Username does not exist' });
+      // }
       if (!articleExists) {
         return Promise.reject({ status: 404, message: "Article does not exist" });
       }

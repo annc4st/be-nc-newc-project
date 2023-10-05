@@ -100,6 +100,9 @@ exports.patchArticle = (req, res, next) => {
     
   const article_id=  req.params.article_id;
   const inc_votes = req.body.inc_votes;
+  if (isNaN(article_id)) {
+    return res.status(400).send({ message: 'Invalid article_id' });
+}
 
   if (isNaN(inc_votes)) {
     return res.status(400).send({ message: "Invalid votes increment" });
