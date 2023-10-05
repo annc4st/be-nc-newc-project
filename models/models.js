@@ -32,34 +32,42 @@ module.exports.checkArticleExists = checkArticleExists;
 // };
 // module.exports.checkUsernameExists = checkUsernameExists;
 
+//also 12
 exports.fetchArticleById = (id) => {
   return db
-    .query(`SELECT * FROM articles WHERE article_id = $1;`, [id])
+    .query(`SELECT a.article_id, a.title, a.author, a.topic, a.body,
+     a.created_at, a.votes, a.article_img_url, CAST(COUNT(c.comment_id) AS INTEGER) AS comment_count 
+    FROM articles AS a 
+    LEFT JOIN comments AS c 
+    ON c.article_id = a.article_id 
+    WHERE a.article_id =$1
+    GROUP BY a.article_id;`
+    , [id])
     .then((result) => {
       if (result.rows.length === 0) {
         return Promise.reject({ status: 404, message: "item does not exist" });
       }
-
       return result.rows[0];
     });
 };
 
 //5 and 11 sortby
-exports.fetchArticles = (topic) => {
-  const validTopics = {
-    mitch: 'mitch',
-    cats: 'cats'
-  };
+exports.fetchArticles = async (topic) => {
   let articlesQuery;
 
-  if (topic in validTopics) {
+  if (topic) {
+    const topicExistsResult = await db.query(`SELECT topic FROM articles WHERE topic = $1;`, [topic]);
+    if (topicExistsResult.rows.length === 0) {
+      return Promise.reject({ status: 404, message: 'Topic does not exist' });
+    }
+
     articlesQuery = `
       SELECT a.article_id, a.title, a.author, a.topic, 
       a.created_at, a.votes, a.article_img_url, 
       COUNT(c.comment_id) AS comment_count 
       FROM articles AS a 
       LEFT JOIN comments AS c ON c.article_id = a.article_id
-      WHERE a.topic = '${validTopics[topic]}'
+      WHERE a.topic = '${topic}'
       GROUP BY a.article_id
       ORDER BY a.created_at DESC;
     `;
@@ -77,13 +85,13 @@ exports.fetchArticles = (topic) => {
 
   return db.query(articlesQuery).then(({ rows }) => {
     return rows;
-  })
+  });
 };
+ 
 //6
 exports.selectArticleComments = (articleId) => {
   return db
-    .query(
-      `
+    .query(`
     SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC; 
     `,
       [articleId]

@@ -49,13 +49,26 @@ exports.getArticleById = (req, res, next) => {
 exports.getArticles = (req, res, next) => {
   const { topic } = req.query;
 
-  fetchArticles(topic)
+  if (!topic) {
+    fetchArticles()
+    .then((articles) => {
+     res.status(200).send({ articles });
+   })
+  .catch((error) => {
+   console.log(error);
+   next(error);
+ });
+  } else {
+  
+    fetchArticles(topic)
     .then((articles) => {
       res.status(200).send({ articles });
     })
     .catch((error) => {
+      console.log(error);
       next(error);
     });
+  }
 };
 //6
 exports.getCommentsForArticle = (req, res, next) => {

@@ -420,13 +420,26 @@ describe('GET /api/articles query topic', () => {
     test('GET 200 if topic does not exist sends array of all articles',  () => {
         return request(app)
         .get('/api/articles?topic=doesntexist')
-        .expect(200)
+        .expect(404)
         .then(({body}) => {
-            expect(body.articles).toHaveLength(13)
-
+            expect(body.message).toBe('Topic does not exist');
         })
     });
 })
+//12
+describe('GET /api/articles/:article_id', () => {
+    test('GET 200 resonds with article object where coment_count is correct', () => {
+        return request(app)
+        .get('/api/articles/1')
+        .expect(200)
+        .then(({body}) => {    
+      
+            expect(body.article.article_id).toBe(1)
+            expect(body.article.title).toBe("Living in the shadow of a great man" )
+            expect(body.article.comment_count).toBe(11)
+        })
+    })
+});
 
 
 

@@ -28,7 +28,7 @@
   },
   "GET /api/articles/:article_id": {
     "description" : "serves an object containing information on the article",
-    "queries": ["article_id", "title"],
+    "queries": ["article_id", "title", "comment_count"],
     "exampleResponse": { 
       
         "article_id": 1,
