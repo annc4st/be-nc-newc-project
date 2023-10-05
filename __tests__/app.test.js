@@ -348,9 +348,34 @@ describe('PATCH /api/articles/:article_id', () => {
         .then(({body}) => {
             expect(body.message).toEqual('Invalid article_id')   
         })
-    })
-
+    });
 })
+
+describe('DELETE /api/comments/comments_id', () => {
+    test('DELETE 204: deletes comment', () => {
+        return request(app)
+        .delete('/api/comments/14')
+        .expect(204)
+    });
+
+    test('DELETE 400: invalid comment_id NaN', () => {
+        return request(app)
+        .delete('/api/comments/not-a-number')
+        .expect(400)
+        .then(({body}) => {
+            expect(body.message).toEqual('Invalid comment_id')   
+        })
+    });
+
+    test('DELETE 404: comment not found', () => {
+        return request(app)
+        .delete('/api/comments/165454')
+        .expect(404)
+        .then(({body}) => {
+            expect(body.message).toEqual('Comment does not exist')   
+        })
+    });
+});
 
 
 
