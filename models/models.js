@@ -75,15 +75,9 @@ exports.selectArticleComments = (articleId) => {
 exports.insertComment = (newComment, id) => {
   const { username, body } = newComment;
 
-  return Promise.all([
-    // checkUsernameExists(newComment.username),
-    checkArticleExists(id)
-  ])
+  return Promise.all([checkArticleExists(id)])
     .then(([articleExists]) => {
-      // if (!usernameExists) {
-      //   return Promise.reject({ status: 404, message:'Username does not exist' });
-      // }
-      if (!articleExists) {
+        if (!articleExists) {
         return Promise.reject({ status: 404, message: "Article does not exist" });
       }
     
