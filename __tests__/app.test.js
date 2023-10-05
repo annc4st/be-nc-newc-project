@@ -48,7 +48,6 @@ describe('GET /api/', () =>{
         .get('/api')
         .expect(200)
         .then(({body}) => {
-           console.log(body);
             expect(typeof(body)).toBe('object')
             //dynamically test all endpoints and their descriptions 
             for (const [endpoint, info] of Object.entries(body)) {
@@ -158,7 +157,7 @@ describe('GET /api/articles/:article_id/comments', () => {
         })
     })
 
-    test('if there is no such article ', () => {
+    test('if there is no such article responds with 404 and message', () => {
         return request(app)
         .get('/api/articles/3723/comments')
         .expect(404)
@@ -173,6 +172,185 @@ describe('GET /api/articles/:article_id/comments', () => {
         .then(({body}) => {
             expect(body.message).toBe('Invalid input syntax')
         })
-    })
+    });
 })
+
+//7
+describe('POST /api/articles/:article_id/comments', () => {
+    test('POST comment, we get the 201 response', () => {
+        const newComment = {
+            username: 'butter_bridge',
+            body: 'I love treasure hunting!'
+        }
+
+        return request(app)
+        
+          .post(`/api/articles/1/comments`)
+          .send(newComment)
+          .expect(201)
+          .then((response) => {
+            const {comment} = response.body; 
+          
+            expect(comment.comment_id).toEqual(expect.any(Number))
+            expect(comment.author).toEqual("butter_bridge")
+            expect(comment.article_id).toEqual(1)
+            expect(comment.body).toEqual('I love treasure hunting!')
+            })
+        })
+
+        test('POST comment 400 responds with an appropriate status and error message when provided with a no comment body', () => {
+            const newComment = {
+                username: "butter_bridge"
+            }
+            
+            return request(app)
+            .post(`/api/articles/1/comments`)
+            .send(newComment)
+            .expect(400)
+            .then((response) => {
+                expect(response.body.message).toEqual('Comment body and username cannot be empty' );
+              })
+          });
+
+          test('POST 400 responds with an appropriate status and error message when provided with a no username', () => {
+            const newComment = {
+                body: 'this is test for a username missing from a comment'
+            }
+            
+            return request(app)
+            .post(`/api/articles/1/comments`)
+            .send(newComment)
+            .expect(400)
+            .then((response) => {
+                expect(response.body.message).toEqual('Comment body and username cannot be empty' );
+              })
+          });
+
+        //delete test for username does not exist
+        //   test('POST 404, username does not exist',  () => {
+        //     const newComment = {
+        //         username: "iDonotExist",
+        //         body: 'this is test for a username missing from a comment'
+        //     }
+        //     return request(app)
+        //     .post(`/api/articles/1/comments`)
+        //     .send(newComment)
+        //     .expect(404)
+        //     .then((response) => {
+        //         expect(response.body.message).toEqual('Username does not exist' );
+        //       })
+        //   });
+
+          test('if there is no such article responds with 404 and message', () => {
+            const newComment = {
+                username: "rogersop",
+                body: 'this is test for a username missing from a comment'
+            }
+            return request(app)
+            .post(`/api/articles/654654/comments`)
+            .send(newComment)
+            .expect(404)
+            .then(({body}) => {
+                
+                expect(body.message).toBe("Article does not exist")
+        })
+    });
+    test('if there is article_id is not valid responds with 400', () => {
+        const newComment = {
+        username: "rogersop",
+        body: 'this is test for a username missing from a comment'
+    }
+        return request(app)
+        .post(`/api/articles/notID/comments`)
+        .send(newComment)
+        .expect(400)
+        .then(({body}) => {
+            expect(body.message).toBe('Invalid article_id' )
+            })
+    });  
+});
+
+// 8
+describe('PATCH /api/articles/:article_id', () => {
+    test('200: responds with updated article', () => {
+        const articleUpdate = { inc_votes : 1 }
+        return request(app)
+        .patch('/api/articles/1')
+        .send(articleUpdate)
+        .expect(200)
+        .then((response) => {
+            const {article} = response.body;
+            
+            expect(article).toEqual({
+                article_id: 1,
+                title: "Living in the shadow of a great man",
+                topic: "mitch",
+                author: "butter_bridge",
+                body: "I find this existence challenging",
+                created_at: "2020-07-09T20:11:00.000Z",
+                votes: 101,
+                article_img_url: "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+
+            })
+        })
+    });
+    test('200: responds with updated article', () => {
+        const articleUpdate = { inc_votes : -1 }
+        return request(app)
+        .patch('/api/articles/1')
+        .send(articleUpdate)
+        .expect(200)
+        .then((response) => {
+            const {article} = response.body;
+          
+            expect(article).toEqual({
+                article_id: 1,
+                title: "Living in the shadow of a great man",
+                topic: "mitch",
+                author: "butter_bridge",
+                body: "I find this existence challenging",
+                created_at: "2020-07-09T20:11:00.000Z",
+                votes: 99,
+                article_img_url: "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+
+            })
+        })
+    });
+
+    test('404: article doesnt exist', () => {
+        const articleUpdate = { inc_votes : 1 }
+        return request(app)
+        .patch('/api/articles/456454')
+        .send(articleUpdate)
+        .expect(404)
+        .then(({body}) => {
+             
+            expect(body.message).toEqual('Article does not exist')   
+        })
+    });
+    test('400: votes increment should be a number', () => {
+        const articleUpdate = { inc_votes : "not-a-Number" }
+        return request(app)
+        .patch('/api/articles/1')
+        .send(articleUpdate)
+        .expect(400)
+        .then(({body}) => {
+            expect(body.message).toEqual("Invalid votes increment")   
+        })
+    });
+
+    test('400: invalid article ID NaN', () => {
+        const articleUpdate = { inc_votes : "not-a-Number" }
+        return request(app)
+        .patch('/api/articles/not-a-Number')
+        .send(articleUpdate)
+        .expect(400)
+        .then(({body}) => {
+            expect(body.message).toEqual('Invalid article_id')   
+        })
+    })
+
+})
+
+
 
