@@ -252,7 +252,7 @@ describe('POST /api/articles/:article_id/comments', () => {
             .send(newComment)
             .expect(404)
             .then(({body}) => {
-                console.log(body)
+                
                 expect(body.message).toBe("Article does not exist")
         })
     });
@@ -282,7 +282,7 @@ describe('PATCH /api/articles/:article_id', () => {
         .expect(200)
         .then((response) => {
             const {article} = response.body;
-            console.log("article  ", article)
+            
             expect(article).toEqual({
                 article_id: 1,
                 title: "Living in the shadow of a great man",
@@ -304,7 +304,7 @@ describe('PATCH /api/articles/:article_id', () => {
         .expect(200)
         .then((response) => {
             const {article} = response.body;
-            // console.log("article  ", article)
+          
             expect(article).toEqual({
                 article_id: 1,
                 title: "Living in the shadow of a great man",
@@ -330,15 +330,14 @@ describe('PATCH /api/articles/:article_id', () => {
             expect(body.message).toEqual('Article does not exist')   
         })
     });
-    test('400: votes less than 0', () => {
-        const articleUpdate = { inc_votes : -5465 }
+    test('400: votes increment should be a number', () => {
+        const articleUpdate = { inc_votes : "not-a-Number" }
         return request(app)
         .patch('/api/articles/1')
         .send(articleUpdate)
         .expect(400)
         .then(({body}) => {
-             console.log(body.message)
-            expect(body.message).toEqual('Votes cannot be negative')   
+            expect(body.message).toEqual("Invalid votes increment")   
         })
     });
 

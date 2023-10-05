@@ -98,16 +98,18 @@ exports.postComment = (req, res, next) => {
 //8 an object in the form { inc_votes: newVote }
 exports.patchArticle = (req, res, next) => {
     
-      const article_id=  req.params.article_id;
-      const inc_votes = req.body.inc_votes;
-   
+  const article_id=  req.params.article_id;
+  const inc_votes = req.body.inc_votes;
 
+  if (isNaN(inc_votes)) {
+    return res.status(400).send({ message: "Invalid votes increment" });
+  }  
+   
     return updateArticle(article_id, inc_votes)
     .then((article) => {
         res.status(200).send({article});
     })
     .catch((error) => {
-
         next(error);
     })
 };

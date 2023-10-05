@@ -104,15 +104,6 @@ exports.updateArticle = async (article_id, inc_votes) => {
   if (articleExistsResult.rows.length === 0) {
     return Promise.reject({ status: 404, message: 'Article does not exist' });
   }
-
-  //check current votes and compare to the increment, if currentVotes - inc_votes < 0 => bad request
-  const currentVotesResult = await db.query(`SELECT votes FROM articles WHERE article_id = $1;`, [article_id])
-  const currentVotes = currentVotesResult.rows[0].votes;
- 
-
-  if ((currentVotes + inc_votes) < 0) {
-    return Promise.reject({ status: 400, message: 'Votes cannot be negative' })
-  }
     
   return db.query(
     `
