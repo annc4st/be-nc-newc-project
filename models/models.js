@@ -122,5 +122,11 @@ exports.updateArticle = async (article_id, inc_votes) => {
       `DELETE FROM comments WHERE comment_id = $1;
       `, [id]
   )
-  
+};
+//10
+exports.fetchUsers = () => {
+  return db.query(`SELECT * FROM users;`)
+  .then(({rows}) => {
+    return rows;
+  })
 };

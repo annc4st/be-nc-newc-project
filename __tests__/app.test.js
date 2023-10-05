@@ -363,7 +363,7 @@ describe('DELETE /api/comments/comments_id', () => {
         .delete('/api/comments/not-a-number')
         .expect(400)
         .then(({body}) => {
-            expect(body.message).toEqual('Invalid comment_id')   
+            expect(body.message).toEqual('Invalid input syntax')   
         })
     });
 
@@ -376,6 +376,22 @@ describe('DELETE /api/comments/comments_id', () => {
         })
     });
 });
+//10
+describe('GET /api/users', () =>{
+    test('responds with status 200 and array of users', () =>{
+        return request(app)
+        .get('/api/users')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.users).toHaveLength(4)
+            body.users.forEach((user) => {
+                expect(typeof(user.name )).toBe('string');
+                expect(typeof(user.username)).toBe('string');
+                expect(typeof(user.avatar_url)).toBe('string');
+            })
+        })
+    });
+})
 
 
 
