@@ -99,8 +99,7 @@ exports.updateArticle = async (article_id, inc_votes) => {
     return Promise.reject({ status: 404, message: 'Article does not exist' });
   }
     
-  return db.query(
-    `
+  return db.query(`
     UPDATE articles 
     SET votes = votes + $1
     WHERE article_id = $2 
@@ -109,9 +108,25 @@ exports.updateArticle = async (article_id, inc_votes) => {
     [inc_votes, article_id]
   )
   .then((result) => {
-    
     return result.rows[0];
   });
 };
 
- 
+ //9
+ exports.delComment = async (id) => {
+  const commentExists = await db.query(`SELECT * FROM comments WHERE comment_id = $1;`, [id])
+  if (commentExists.rows.length === 0) {
+    return Promise.reject({ status: 404, message: 'Comment does not exist' });
+  }
+  return db.query(
+      `DELETE FROM comments WHERE comment_id = $1;
+      `, [id]
+  )
+};
+//10
+exports.fetchUsers = () => {
+  return db.query(`SELECT * FROM users;`)
+  .then(({rows}) => {
+    return rows;
+  })
+};

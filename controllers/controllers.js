@@ -4,7 +4,7 @@ const {
   fetchArticles,
   selectArticleComments,
   insertComment,
-  updateArticle
+  updateArticle, delComment, fetchUsers
 } = require("../models/models.js");
 
 const fs = require("fs/promises");
@@ -115,6 +115,31 @@ exports.patchArticle = (req, res, next) => {
     .catch((error) => {
         next(error);
     })
+};
+
+//9
+exports.deleteComment = (req, res, next) => {
+  const {comment_id} = req.params;
+  // catching this error with psql 
+//   if (isNaN(comment_id)) {
+//     return res.status(400).send({ message: 'Invalid comment_id' });
+// }
+  delComment(comment_id).then(() =>{
+    res.status(204).send();
+  })
+  .catch((error) => {
+    next(error);
+})
+}
+//10
+exports.getUsers = (req, res, next) =>{
+  fetchUsers()
+  .then((users) => {
+    res.status(200).send({ users });
+  })
+  .catch((error) => {
+    next(error);
+  });
 };
 
 
