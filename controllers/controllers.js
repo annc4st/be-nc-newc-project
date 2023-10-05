@@ -55,7 +55,6 @@ exports.getArticles = (req, res, next) => {
      res.status(200).send({ articles });
    })
   .catch((error) => {
-   console.log(error);
    next(error);
  });
   } else {
@@ -65,7 +64,6 @@ exports.getArticles = (req, res, next) => {
       res.status(200).send({ articles });
     })
     .catch((error) => {
-      console.log(error);
       next(error);
     });
   }
