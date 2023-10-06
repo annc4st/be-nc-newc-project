@@ -54,32 +54,10 @@ exports.getArticles = (req, res, next) => {
       res.status(200).send({articles})
     })
     .catch((error) => {
-      console.log("error 2::", error);
       next(error)
     });
-  
-  }
+}
 
-//v orig
-//   const { topic } = req.query;
-//   if (!topic) {
-//     fetchArticles()
-//     .then((articles) => {
-//      res.status(200).send({ articles });
-//    })
-//   .catch((error) => {
-//    next(error);
-//  });
-//   } else {  
-//     fetchArticles(topic)
-//     .then((articles) => {
-//       res.status(200).send({ articles });
-//     })
-//     .catch((error) => {
-//       next(error);
-//     });
-//   }
-// };
 //6
 exports.getCommentsForArticle = (req, res, next) => {
   const { article_id } = req.params;
