@@ -6,7 +6,8 @@ Users are able to view topics, read articles and post articles and comments.
 
 ### Hosted Version
 https://nc-news-proj.onrender.com
-The main endpoints are:
+
+-**The main endpoints are:**
 - > '/api' 
 - > '/api/topics'
 - > '/api/articles/:article_id'
