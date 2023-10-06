@@ -13,24 +13,11 @@ checkArticleExists = async (article_id) => {
       if (result.rows.length === 0) {
         return Promise.reject({ status: 404, message: 'Article does not exist' });
       }
-
       return result.rows[0];
     })
 };
 module.exports.checkArticleExists = checkArticleExists;
 
-// checkUsernameExists = async (username) => {
-//   return db.query(
-//     "SELECT username FROM users WHERE username = $1;", [username])
-//     .then((result) => {
-
-//         if(result.rows.length === 0) {
-//             return Promise.reject({ status: 404, message: 'Username does not exist'});
-//         }
-//       return result.rows[0];
-//     })
-// };
-// module.exports.checkUsernameExists = checkUsernameExists;
 
 //also 12
 exports.fetchArticleById = (id) => {

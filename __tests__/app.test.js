@@ -417,7 +417,7 @@ describe('GET /api/articles query topic', () => {
             })
         })
     });
-    test('GET 200 if topic does not exist sends array of all articles',  () => {
+    test('GET 404 if topic does not exist sends message that topic doesnot exist',  () => {
         return request(app)
         .get('/api/articles?topic=doesntexist')
         .expect(404)
