@@ -7,7 +7,7 @@ Users are able to view topics, read articles and post articles and comments.
 ### Hosted Version
 https://nc-news-proj.onrender.com
 
--**The main endpoints are:**
+**The main endpoints are:**
 - > '/api' 
 - > '/api/topics'
 - > '/api/articles/:article_id'
@@ -35,13 +35,13 @@ You will need to set up a local PostgreSQL database and configure the project to
 1. Create a PostgreSQL database with a name of your choice.
 
 2. Create a **.env ** files in the project root directory with the following content:
-**.env.development** file in the project root directory for development with the following content:
+- **.env.development** file in the project root directory for development with the following content:
 > PGDATABASE=nc_news
 
-**.env.test** file in the project root directory for testing with the following content:
+- **.env.test** file in the project root directory for testing with the following content:
 >PGDATABASE=nc_news_test
 
-**.env.production** 
+- **.env.production** 
 > DATABASE_URL=postgres://bpqwqlct:xesQyGOz6_OWQvmof9LGB8PrBimE9vpI@tai.db.elephantsql.com/bpqwqlct
  
 ### Running Tests
