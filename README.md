@@ -7,15 +7,15 @@ Users are able to view topics, read articles and post articles and comments.
 ### Hosted Version
 https://nc-news-proj.onrender.com
 The main endpoints are:
-> '/api' 
-> '/api/topics'
-> '/api/articles/:article_id'
-> '/api/articles'
-> '/api/articles/:article_id/comments'
-> '/api/articles/:article_id/comments'
-> '/api/articles/:article_id'
-> '/api/comments/:comment_id'
-> '/api/users'
+- > '/api' 
+- > '/api/topics'
+- > '/api/articles/:article_id'
+- > '/api/articles'
+- > '/api/articles/:article_id/comments'
+- > '/api/articles/:article_id/comments'
+- > '/api/articles/:article_id'
+- > '/api/comments/:comment_id'
+- > '/api/users'
 
 The database is PSQL for this project.
 
@@ -50,11 +50,11 @@ To run the project's tests, use the following command:
 ### Requirements
 To run this project, you need the following minimum versions:
 
-**Node.js** (v17.9.1)
-**PostgreSQL** (v14.9)
-**Express** (4.18.2)
+- **Node.js** (v17.9.1)
+- **PostgreSQL** (v14.9)
+- **Express** (4.18.2)
 
-### List of devdependencies and dependencies from the package json file:
+### List of devdependencies and dependencies from the package.json file:
 
  ```javascript
 
