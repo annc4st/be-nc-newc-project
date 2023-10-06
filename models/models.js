@@ -38,9 +38,33 @@ exports.fetchArticleById = (id) => {
     });
 };
 
-//5 and 11 sortby
-exports.fetchArticles = async (topic) => {
+//5 11  15
+exports.fetchArticles = async (topic, sortby="created_at", order="DESC") => {
+
+  const validSortBy = {
+    article_id: "article_id",
+    title: "title",
+    author: "author",
+    topic: "topic",
+    votes: "votes", 
+    created_at: "created_at",
+  };
+
+  const validOrder = {
+    DESC : 'DESC',
+    ASC: 'ASC',
+  }
+
+  if (!(order in validOrder)) {
+    return Promise.reject({ status: 400, message: 'Order parameter does not exist'});
+  }
+
+  if (!(sortby in validSortBy)) {
+    return Promise.reject({ status: 400, message: 'Sort parameter does not exist'});
+  }
+
   let articlesQuery;
+
 
   if (topic) {
     const topicExistsResult = await db.query(`SELECT topic FROM articles WHERE topic = $1;`, [topic]);
@@ -56,9 +80,9 @@ exports.fetchArticles = async (topic) => {
       LEFT JOIN comments AS c ON c.article_id = a.article_id
       WHERE a.topic = '${topic}'
       GROUP BY a.article_id
-      ORDER BY a.created_at DESC;
+      ORDER BY ${validSortBy[sortby]} ${validOrder[order]};
     `;
-  } else {
+  } else if (sortby, order){
     articlesQuery = `
       SELECT a.article_id, a.title, a.author, a.topic, 
       a.created_at, a.votes, a.article_img_url, 
@@ -66,7 +90,7 @@ exports.fetchArticles = async (topic) => {
       FROM articles AS a 
       LEFT JOIN comments AS c ON c.article_id = a.article_id
       GROUP BY a.article_id
-      ORDER BY a.created_at DESC; 
+      ORDER BY ${validSortBy[sortby]} ${validOrder[order]}; 
     `;
   }
 
