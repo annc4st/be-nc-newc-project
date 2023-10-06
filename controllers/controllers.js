@@ -47,27 +47,39 @@ exports.getArticleById = (req, res, next) => {
 };
 //5 , 11
 exports.getArticles = (req, res, next) => {
-  const { topic } = req.query;
-
-  if (!topic) {
-    fetchArticles()
-    .then((articles) => {
-     res.status(200).send({ articles });
-   })
-  .catch((error) => {
-   next(error);
- });
-  } else {
-  
-    fetchArticles(topic)
-    .then((articles) => {
-      res.status(200).send({ articles });
+  const topic = req.query.topic;
+  const sortby = req.query.sortby;
+  const order = req.query.order;
+  return fetchArticles(topic, sortby, order).then((articles) =>{
+      res.status(200).send({articles})
     })
     .catch((error) => {
-      next(error);
+      console.log("error 2::", error);
+      next(error)
     });
+  
   }
-};
+
+//v orig
+//   const { topic } = req.query;
+//   if (!topic) {
+//     fetchArticles()
+//     .then((articles) => {
+//      res.status(200).send({ articles });
+//    })
+//   .catch((error) => {
+//    next(error);
+//  });
+//   } else {  
+//     fetchArticles(topic)
+//     .then((articles) => {
+//       res.status(200).send({ articles });
+//     })
+//     .catch((error) => {
+//       next(error);
+//     });
+//   }
+// };
 //6
 exports.getCommentsForArticle = (req, res, next) => {
   const { article_id } = req.params;

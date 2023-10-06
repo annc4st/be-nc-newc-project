@@ -4,7 +4,6 @@ const db = require('../db/connection');
 const request = require('supertest');
 const seed = require('../db/seeds/seed.js');
 const {articleData, commentData, topicData, userData} = require('../db/data/test-data/index');
-const {getTopics} = require('../controllers/controllers.js');
 
 
 
@@ -440,6 +439,69 @@ describe('GET /api/articles/:article_id', () => {
         })
     })
 });
+
+//15
+describe(' GET api/articles topic, sortby and order',  () => {
+test('GET:200 sends an appropriate status and article array on the certain topic sortby author and order asc', () => {
+    return request(app)
+    .get('/api/articles?topic=mitch&sortby=author&order=ASC')
+    .expect(200)
+    .then(({body}) => {    
+        expect(body.articles).toHaveLength(12)
+        expect(body.articles).toBeSortedBy('author', {descending: false})
+        body.articles.forEach((article) => {
+            expect(article.topic).toEqual('mitch')
+            })
+        expect(body.articles[0].article_id).toBe(1);
+        })
+    });
+
+    test('GET:200 sends article array on the certain topic sortby author and order desc by default', () => {
+        return request(app)
+        .get('/api/articles?topic=mitch&sortby=author')
+        .expect(200)
+        .then(({body}) => {    
+            expect(body.articles).toHaveLength(12)
+            expect(body.articles).toBeSortedBy('author', {descending: true})
+            body.articles.forEach((article) => {
+                expect(article.topic).toEqual('mitch')
+                })
+            expect(body.articles[0].article_id).toBe(4);
+            })
+        });
+
+    test('GET: 400 sortby parameter not valid sends an appropriate message', () => {
+        return request(app)
+        .get('/api/articles?sortby=notvalidparam&order=ASC')
+        .expect(400)
+        .then(({body}) => {     
+            expect(body.message).toBe('Sort parameter does not exist')
+        })
+    });
+    test('GET: 400 order parameter not valid sends an appropriate message', () => {
+        return request(app)
+        .get('/api/articles?sortby=author&order=notvalid')
+        .expect(400)
+        .then(({body}) => {     
+            expect(body.message).toBe('Order parameter does not exist')
+            
+        })
+    });
+    test('GET:200 sends article array on the certain topic sortby created_at and order desc by default', () => {
+        return request(app)
+        .get('/api/articles?topic=mitch&sortby=created_at')
+        .expect(200)
+        .then(({body}) => {    
+            expect(body.articles).toHaveLength(12)
+            expect(body.articles).toBeSortedBy('created_at', {descending: true})
+            expect(body.articles[0].article_id).toBe(3);
+            })
+        });
+
+})
+ 
+
+
 
 
 
