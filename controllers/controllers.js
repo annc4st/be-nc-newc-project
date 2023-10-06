@@ -45,15 +45,28 @@ exports.getArticleById = (req, res, next) => {
       next(error);
     });
 };
-//5
+//5 , 11
 exports.getArticles = (req, res, next) => {
-  fetchArticles()
+  const { topic } = req.query;
+
+  if (!topic) {
+    fetchArticles()
+    .then((articles) => {
+     res.status(200).send({ articles });
+   })
+  .catch((error) => {
+   next(error);
+ });
+  } else {
+  
+    fetchArticles(topic)
     .then((articles) => {
       res.status(200).send({ articles });
     })
     .catch((error) => {
       next(error);
     });
+  }
 };
 //6
 exports.getCommentsForArticle = (req, res, next) => {

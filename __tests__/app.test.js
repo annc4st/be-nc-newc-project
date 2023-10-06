@@ -198,7 +198,7 @@ describe('POST /api/articles/:article_id/comments', () => {
             })
         })
 
-        test('POST comment 400 responds with an appropriate status and error message when provided with a no comment body', () => {
+    test('POST comment 400 responds with an appropriate status and error message when provided with a no comment body', () => {
             const newComment = {
                 username: "butter_bridge"
             }
@@ -212,7 +212,7 @@ describe('POST /api/articles/:article_id/comments', () => {
               })
           });
 
-          test('POST 400 responds with an appropriate status and error message when provided with a no username', () => {
+    test('POST 400 responds with an appropriate status and error message when provided with a no username', () => {
             const newComment = {
                 body: 'this is test for a username missing from a comment'
             }
@@ -241,7 +241,7 @@ describe('POST /api/articles/:article_id/comments', () => {
         //       })
         //   });
 
-          test('if there is no such article responds with 404 and message', () => {
+    test('if there is no such article responds with 404 and message', () => {
             const newComment = {
                 username: "rogersop",
                 body: 'this is test for a username missing from a comment'
@@ -350,7 +350,7 @@ describe('PATCH /api/articles/:article_id', () => {
         })
     });
 })
-
+//9
 describe('DELETE /api/comments/comments_id', () => {
     test('DELETE 204: deletes comment', () => {
         return request(app)
@@ -392,6 +392,54 @@ describe('GET /api/users', () =>{
         })
     });
 })
+//11
+describe('GET /api/articles query topic', () => {
+    test('GET:200 sends an appropriate status and article array on the certain topic', () => {
+        return request(app)
+        .get('/api/articles?topic=cats')
+        .expect(200)
+        .then(({body}) => {         
+            expect(body.articles).toHaveLength(1)
+
+            body.articles.forEach((article) => {
+                expect(article.topic).toEqual('cats')
+            })
+        })
+    });
+    test('GET:200 sends an appropriate status and article array on the certain topic', () => {
+        return request(app)
+        .get('/api/articles?topic=mitch')
+        .expect(200)
+        .then(({body}) => {         
+            expect(body.articles).toHaveLength(12)
+            body.articles.forEach((article) => {
+                expect(article.topic).toEqual('mitch')
+            })
+        })
+    });
+    test('GET 404 if topic does not exist sends message that topic doesnot exist',  () => {
+        return request(app)
+        .get('/api/articles?topic=doesntexist')
+        .expect(404)
+        .then(({body}) => {
+            expect(body.message).toBe('Topic does not exist');
+        })
+    });
+})
+//12
+describe('GET /api/articles/:article_id', () => {
+    test('GET 200 resonds with article object where coment_count is correct', () => {
+        return request(app)
+        .get('/api/articles/1')
+        .expect(200)
+        .then(({body}) => {    
+      
+            expect(body.article.article_id).toBe(1)
+            expect(body.article.title).toBe("Living in the shadow of a great man" )
+            expect(body.article.comment_count).toBe(11)
+        })
+    })
+});
 
 
 
