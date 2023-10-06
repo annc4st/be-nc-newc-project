@@ -1,4 +1,8 @@
 const app = require('./db/app.js');
 const { PORT = 9090 } = process.env;
 
-app.listen(PORT, () => console.log(`Listening on ${PORT}...`));
+app.listen(PORT, (err) => {
+    if (err) throw err;
+
+console.log(`Listening on ${PORT}...`);
+});
