@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const {
   getTopics, getEndPoints, getArticleById, getArticles,
   getCommentsForArticle, postComment, patchArticle, deleteComment,
@@ -8,7 +9,10 @@ const {
 
 
 
+
+
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 app.get('/api/topics', getTopics);
@@ -28,8 +32,7 @@ app.patch('/api/articles/:article_id', patchArticle);
 app.delete('/api/comments/:comment_id', deleteComment);
 //10
 app.get('/api/users', getUsers);
-//11
-
+ 
 
 
 
