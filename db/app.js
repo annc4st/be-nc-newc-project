@@ -3,7 +3,7 @@ const cors = require('cors');
 const {
   getTopics, getEndPoints, getArticleById, getArticles,
   getCommentsForArticle, postComment, patchArticle, deleteComment,
-  getUsers
+  getUsers, getUserByUsername
 } = require('../controllers/controllers.js');
 
 
@@ -32,6 +32,8 @@ app.patch('/api/articles/:article_id', patchArticle);
 app.delete('/api/comments/:comment_id', deleteComment);
 //10
 app.get('/api/users', getUsers);
+
+app.get('/api/users/:username', getUserByUsername);
  
 
 

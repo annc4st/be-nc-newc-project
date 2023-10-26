@@ -4,7 +4,7 @@ const {
   fetchArticles,
   selectArticleComments,
   insertComment,
-  updateArticle, delComment, fetchUsers
+  updateArticle, delComment, fetchUsers, fetchUserByUsername
 } = require("../models/models.js");
 
 const fs = require("fs/promises");
@@ -145,6 +145,22 @@ exports.getUsers = (req, res, next) =>{
   });
 };
 
+
+exports.getUserByUsername = (req, res, next) =>{
+  const { username } = req.params;
+
+  fetchUserByUsername(username)
+    .then((user) => {
+      if (user) {
+        res.status(200).send({ user });
+      } else {
+        res.status(404).send({ message: 'User not found' });
+      }
+    })
+    .catch((error) => {
+      next(error);
+    });
+}
 
 
 
