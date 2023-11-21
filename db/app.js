@@ -1,51 +1,16 @@
 const express = require('express');
 const cors = require('cors');
-const {
-  getTopics, getEndPoints, getArticleById, getArticles,
-  getCommentsForArticle, postComment, patchArticle, deleteComment,
-  getUsers, getUserByUsername
-} = require('../controllers/controllers.js');
-
-
-
-
-
+const apiRouter = require('../routes/api-router');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
-
-app.get('/api/topics', getTopics);
-
-app.get('/api', getEndPoints);
-//4
-app.get('/api/articles/:article_id', getArticleById);
-//5
-app.get('/api/articles', getArticles);
-//6
-app.get('/api/articles/:article_id/comments', getCommentsForArticle);
-//7
-app.post('/api/articles/:article_id/comments', postComment);
-//8
-app.patch('/api/articles/:article_id', patchArticle);
-//9
-app.delete('/api/comments/:comment_id', deleteComment);
-//10
-app.get('/api/users', getUsers);
-
-app.get('/api/users/:username', getUserByUsername);
- 
-
-
-
-
+app.use('/api', apiRouter);
 
 
 app.all('/*',(request, response) =>{
-    response.status(404).send({ message: 'path is not found'})
+    response.status(404).send({ message: 'path is not found'})  //to change to Bad Request
   })
-
-
 
 //Error handling
 
@@ -62,7 +27,16 @@ app.use((error, req, res, next) => {
   }
   });
 
-
-
+  // app.get('/api/topics', getTopics);
+  // app.get('/api', getEndPoints);
+  // app.get('/api/articles/:article_id', getArticleById);
+  // app.get('/api/articles', getArticles);
+  // app.patch('/api/articles/:article_id', patchArticle);
+  // app.get('/api/articles/:article_id/comments', getCommentsForArticle);
+  // app.post('/api/articles/:article_id/comments', postComment);
+  
+  // app.delete('/api/comments/:comment_id', deleteComment);
+  // app.get('/api/users', getUsers);
+  // app.get('/api/users/:username', getUserByUsername);
 
 module.exports = app;
