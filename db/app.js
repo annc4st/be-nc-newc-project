@@ -27,16 +27,5 @@ app.use((error, req, res, next) => {
   }
   });
 
-  // app.get('/api/topics', getTopics);
-  // app.get('/api', getEndPoints);
-  // app.get('/api/articles/:article_id', getArticleById);
-  // app.get('/api/articles', getArticles);
-  // app.patch('/api/articles/:article_id', patchArticle);
-  // app.get('/api/articles/:article_id/comments', getCommentsForArticle);
-  // app.post('/api/articles/:article_id/comments', postComment);
-  
-  // app.delete('/api/comments/:comment_id', deleteComment);
-  // app.get('/api/users', getUsers);
-  // app.get('/api/users/:username', getUserByUsername);
 
 module.exports = app;
