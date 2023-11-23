@@ -4,7 +4,10 @@ const {
   fetchArticles,
   selectArticleComments,
   insertComment,
-  updateArticle, delComment, fetchUsers, fetchUserByUsername
+  updateArticle, delComment, 
+  fetchUsers, fetchUserByUsername, 
+  updateComment,
+  insertArticle
 } = require("../models/models.js");
 
 const fs = require("fs/promises");
@@ -162,5 +165,43 @@ exports.getUserByUsername = (req, res, next) =>{
     });
 }
 
+// 18
+exports.patchVotesComment = (req, res, next) =>{
+  const comment_id = req.params.comment_id;
+  const inc_votes = req.body.inc_votes;
 
+  if (isNaN(comment_id)) {
+    return res.status(400).send({ message: 'Invalid comment_id' });
+  }
+  if (isNaN(inc_votes)) {
+    return res.status(400).send({ message: "Invalid votes increment" });
+  }  
+
+  return updateComment(comment_id, inc_votes)
+  .then((comment) => {
+    res.status(200).send({ comment})
+  })
+  .catch((error) => {
+    next(error);
+})
+};
+
+
+//19
+exports.postArticle = (req, res, next) => {
+  const newArticle = req.body;
+  
+  if (!newArticle.title || !newArticle.username || !newArticle.body 
+    || !newArticle.topic ) { 
+    return res.status(422).send({ message: 'Article body, title, topic and author cannot be empty' });
+  }
+   
+  return insertArticle(newArticle)
+  .then((article) => {
+    res.status(201).send({ article})
+  })
+  .catch((error) => {
+    next(error);
+  })
+}
 

@@ -44,6 +44,7 @@ exports.fetchArticles = async (topic, sortby="created_at", order="DESC") => {
   const validSortBy = {
     article_id: "article_id",
     title: "title",
+    body: "body",
     author: "author",
     topic: "topic",
     votes: "votes", 
@@ -73,7 +74,7 @@ exports.fetchArticles = async (topic, sortby="created_at", order="DESC") => {
     }
 
     articlesQuery = `
-      SELECT a.article_id, a.title, a.author, a.topic, 
+      SELECT a.article_id, a.title, a.author, a.body, a.topic, 
       a.created_at, a.votes, a.article_img_url, 
       COUNT(c.comment_id) AS comment_count 
       FROM articles AS a 
@@ -82,9 +83,9 @@ exports.fetchArticles = async (topic, sortby="created_at", order="DESC") => {
       GROUP BY a.article_id
       ORDER BY ${validSortBy[sortby]} ${validOrder[order]};
     `;
-  } else if (sortby, order){
+  } else if (sortby && order){
     articlesQuery = `
-      SELECT a.article_id, a.title, a.author, a.topic, 
+      SELECT a.article_id, a.title, a.author, a.body, a.topic, 
       a.created_at, a.votes, a.article_img_url, 
       COUNT(c.comment_id) AS comment_count 
       FROM articles AS a 
@@ -181,4 +182,65 @@ exports.fetchUserByUsername = (username) => {
     }
     return rows[0];
   })
+}
+
+//18 update voting on comments
+exports.updateComment = async(comment_id, inc_votes) => {
+  const commentExistsResult = await db
+  .query(`SELECT * FROM comments WHERE comment_id = $1;`, [comment_id]);
+
+  if (commentExistsResult.rows.length === 0) {
+    return Promise.reject({status: 404, message: "Comment not found"});
+  }
+
+  return db.query(
+    `
+  UPDATE comments
+  SET votes = votes + $1
+  WHERE comment_id = $2
+  RETURNING *;`, [inc_votes, comment_id]
+  )
+  .then((result) => {
+    return result.rows[0];
+  })
+  .catch((error) => {
+    console.error(error);
+  })
+}
+
+//19 post article
+exports.insertArticle = async (newArticle) => {
+  
+  let { title, username, body, topic, article_img_url } = newArticle;
+
+  if(!article_img_url) {
+    article_img_url = "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700"
+  }
+ 
+  if (topic) {
+    const topicExistsResult = await db.query(`SELECT slug FROM topics WHERE slug = $1;`, [topic]);
+    if (topicExistsResult.rows.length === 0) {
+      return Promise.reject({ status: 404, message: 'Topic does not exist' });
+    }
+  }
+
+  if (username) {
+    const userExistsResult = await db.query(`SELECT user FROM users WHERE username = $1;`, [username]);
+    if (userExistsResult.rows.length === 0) {
+      return Promise.reject({ status: 404, message: 'User does not exist' });
+    }
+  }
+ 
+  return db.query(
+    `INSERT INTO articles (title, author, body, topic, article_img_url) 
+    VALUES ($1, $2, $3, $4, $5)
+    RETURNING *;`, [title, username, body, topic, article_img_url])
+    .then((data) => {
+      const result = data.rows[0];
+      result.comment_count = 0; 
+      return result;
+    })
+    .catch((error) => {
+      throw error; 
+    });
 }
