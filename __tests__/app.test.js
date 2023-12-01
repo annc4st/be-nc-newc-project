@@ -584,3 +584,63 @@ describe("POST /api/articles", () => {
       });
   });
 });
+
+
+describe("POST /api/topics", () => {
+  test("1 POST new topic, we get the 201 response", () => {
+    const topic = {
+      slug: "basketball",
+      description: "Amazing game for all people",
+    };
+    return request(app)
+      .post("/api/topics")
+      .send(topic)
+      .expect(201)
+      .then((response) => {
+        const { topic} = response.body;
+        expect(topic.slug).toEqual("basketball");
+        expect(topic.description).toEqual("Amazing game for all people");
+      });
+  });
+  test("2 POST topic with duplicate slug, we get the 422 response", () => {
+    const topic = {
+      slug: "cats",
+      description: "Amazing animals",
+    };
+    return request(app)
+      .post("/api/topics")
+      .send(topic)
+      .expect(422)
+      .then((response) => {
+        expect(response.body.message).toBe('Topic with the same slug already exists')
+      });
+  });
+  test("3 POST topic with duplicate slug, we get the 422 response", () => {
+    const topic = {
+       description: "Amazing animals",
+    };
+    return request(app)
+      .post("/api/topics")
+      .send(topic)
+      .expect(422)
+      .then((response) => {
+        expect(response.body.message).toBe('Slug and description cannot be empty')
+      });
+  });
+
+  test("4 POST topic with duplicate description, we get the 422 response", () => {
+    const topic = {
+      slug: "bugs",
+       description: "Not dogs",
+    };
+    return request(app)
+      .post("/api/topics")
+      .send(topic)
+      .expect(422)
+      .then((response) => {
+        expect(response.body.message).toBe('Topic with the same description already exists')
+      });
+  });
+
+  
+})
