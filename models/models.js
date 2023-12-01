@@ -39,7 +39,7 @@ exports.fetchArticleById = (id) => {
 };
 
 //5 11  15
-exports.fetchArticles = async (topic, sortby="created_at", order="DESC") => {
+exports.fetchArticles = async (topic, sortby="created_at", order="DESC", limit=10, page=1) => {
 
   const validSortBy = {
     article_id: "article_id",
@@ -63,15 +63,16 @@ exports.fetchArticles = async (topic, sortby="created_at", order="DESC") => {
   if (!(sortby in validSortBy)) {
     return Promise.reject({ status: 400, message: 'Sort parameter does not exist'});
   }
-
-  let articlesQuery;
+  const skip = (page - 1) * limit;
+   let articlesQuery;
 
 
   if (topic) {
+    // console.log('topic:>> ', topic)
     const topicExistsResult = await db.query(`SELECT topic FROM articles WHERE topic = $1;`, [topic]);
     if (topicExistsResult.rows.length === 0) {
-      return Promise.reject({ status: 404, message: 'Topic does not exist' });
-    }
+        return Promise.reject({ status: 404, message: 'Topic does not exist' });
+      }
 
     articlesQuery = `
       SELECT a.article_id, a.title, a.author, a.body, a.topic, 
@@ -80,8 +81,10 @@ exports.fetchArticles = async (topic, sortby="created_at", order="DESC") => {
       FROM articles AS a 
       LEFT JOIN comments AS c ON c.article_id = a.article_id
       WHERE a.topic = '${topic}'
-      GROUP BY a.article_id
-      ORDER BY ${validSortBy[sortby]} ${validOrder[order]};
+      GROUP BY a.article_id, a.title, a.author, a.body, a.topic, 
+      a.created_at, a.votes, a.article_img_url
+      ORDER BY ${validSortBy[sortby]} ${validOrder[order]}
+      LIMIT ${limit} OFFSET ${skip};
     `;
   } else if (sortby && order){
     articlesQuery = `
@@ -91,26 +94,48 @@ exports.fetchArticles = async (topic, sortby="created_at", order="DESC") => {
       FROM articles AS a 
       LEFT JOIN comments AS c ON c.article_id = a.article_id
       GROUP BY a.article_id
-      ORDER BY ${validSortBy[sortby]} ${validOrder[order]}; 
+      ORDER BY ${validSortBy[sortby]} ${validOrder[order]}
+      LIMIT ${limit} OFFSET ${skip};
     `;
   }
 
-  return db.query(articlesQuery).then(({ rows }) => {
-    return rows;
-  });
+  const totalCountQuery = `SELECT COUNT(*) AS total_count FROM articles AS a WHERE ${topic ? `a.topic = '${topic}'` : '1 = 1'};`; // totalCountResult
+  const [articlesResult, totalCountResult]  = await Promise.all([db.query(articlesQuery), db.query(totalCountQuery)]);
+
+  return {
+    total_count: totalCountResult.rows[0].total_count,
+    articles: articlesResult.rows,
+    
+  }
 };
  
 //6
-exports.selectArticleComments = (articleId) => {
-  return db
-    .query(`
-    SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC; 
-    `,
-      [articleId]
-    )
-    .then((result) => {
-      return result.rows;
-    });
+exports.selectArticleComments = async (articleId, limit=10, page=1) => {
+  const commentSkip = (page - 1) * limit;
+
+  let commentQuery = `
+  SELECT * FROM comments 
+  WHERE article_id = ${articleId} 
+  ORDER BY created_at DESC LIMIT ${limit} OFFSET ${commentSkip};
+  `;
+
+  const commentCountQuery = `
+  SELECT COUNT(*) AS comment_count 
+  FROM comments WHERE article_id = ${articleId};
+  `;
+
+  const [commentsResult, commentCountResult] = await Promise.all([
+    db.query(commentQuery), 
+    db.query(commentCountQuery)
+  ])
+
+  // console.log("models 132 >> ", commentsResult.rows)
+  return  {
+    comment_count: commentCountResult.rows[0].comment_count,
+    commentsArray: commentsResult.rows
+  }
+   
+    
 };
 //7
 exports.insertComment = (newComment, id) => {
