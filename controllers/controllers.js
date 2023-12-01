@@ -7,7 +7,7 @@ const {
   updateArticle, delComment, 
   fetchUsers, fetchUserByUsername, 
   updateComment,
-  insertArticle
+  insertArticle, insertTopic
 } = require("../models/models.js");
 
 const fs = require("fs/promises");
@@ -204,3 +204,19 @@ exports.postArticle = (req, res, next) => {
   })
 }
 
+//22 POST Topic
+exports.postTopic = (req, res, next) => {
+  const newTopic = req.body;
+  if(!newTopic.slug || !newTopic.description) {
+    return res.status(422).send({ message: 'Slug and description cannot be empty' });
+  }
+
+  return insertTopic(newTopic)
+  .then((topic) => {
+    res.status(201).send({topic})
+  })
+  .catch((error) => {
+    console.error("Controller - Error posting topic:", error);
+    next(error);
+  })
+}

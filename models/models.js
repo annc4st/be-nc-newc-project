@@ -129,7 +129,6 @@ exports.selectArticleComments = async (articleId, limit=10, page=1) => {
     db.query(commentCountQuery)
   ])
 
-  // console.log("models 132 >> ", commentsResult.rows)
   return  {
     comment_count: commentCountResult.rows[0].comment_count,
     commentsArray: commentsResult.rows
@@ -268,4 +267,34 @@ exports.insertArticle = async (newArticle) => {
     .catch((error) => {
       throw error; 
     });
+}
+//22
+exports.insertTopic = async (newTopic) => {
+  let {slug, description} = newTopic;
+
+  if (slug) {
+    const slugCheckQuery = `SELECT slug FROM topics WHERE slug =$1`;
+    const descriptionCheckQuery = `SELECT description FROM topics WHERE description = $1`;
+    const slugExistsResult = await db.query(slugCheckQuery, [slug])
+    const descriptionExistsResult = await db.query(descriptionCheckQuery, [description]);
+      
+    if (slugExistsResult.rows.length !== 0){
+      return Promise.reject({
+      status: 422, message: "Topic with the same slug already exists",
+     });
+    } else if (descriptionExistsResult.rows.length !==0 ){
+      return Promise.reject({
+        status: 422, message: "Topic with the same description already exists",
+       });
+    }
+
+  return db.query(`INSERT INTO topics (slug, description) VALUES ($1, $2) RETURNING *;`, [slug, description])
+  .then ((data) => {
+    return data.rows[0]
+  })
+  .catch((error) => {
+    console.error('Error inserting topic:', error);
+    throw error;
+  })
+}
 }
