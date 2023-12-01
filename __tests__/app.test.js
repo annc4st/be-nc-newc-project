@@ -51,7 +51,6 @@ describe("GET /api/", () => {
       .expect(200)
       .then(({ body }) => {
         expect(typeof body).toBe("object");
-        //dynamically test all endpoints and their descriptions
         for (const [endpoint, info] of Object.entries(body)) {
           expect(info.description).toBeDefined();
         }
@@ -60,7 +59,7 @@ describe("GET /api/", () => {
 });
 
 //4
-describe("GET /api/articles/:article_id", () => {
+describe(" 4 GET /api/articles/:article_id", () => {
   test("responds with status 200 and with article object", () => {
     return request(app)
       .get("/api/articles/1")
@@ -98,15 +97,16 @@ describe("GET /api/articles/:article_id", () => {
 });
 
 //5
-describe("GET /api/articles responds with array of articles", () => {
+describe(" 5 GET /api/articles responds with array of articles", () => {
   test("GET:200 sends an appropriate status and article array", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
-      .then(({ body }) => {
-        expect(body.articles).toHaveLength(13);
+      .then((response) => {
+        // console.log("test 5-1>>", response.body.articles.total_count);
+        expect(Number(response.body.articles.total_count)).toEqual(13)
 
-        body.articles.forEach((article) => {
+        response.body.articles.articles.forEach((article) => {
           expect(typeof article.article_id).toBe("number");
           expect(typeof article.title).toBe("string");
           expect(typeof article.author).toBe("string");
@@ -122,7 +122,7 @@ describe("GET /api/articles responds with array of articles", () => {
     return request(app)
       .get("/api/articles")
       .then(({ body }) => {
-        expect(body.articles).toBeSortedBy("created_at", { descending: true });
+        expect(body.articles.articles).toBeSortedBy("created_at", { descending: true });
       });
   });
 
@@ -137,13 +137,14 @@ describe("GET /api/articles responds with array of articles", () => {
 });
 
 //6
-describe("GET /api/articles/:article_id/comments", () => {
+describe(" 6 GET /api/articles/:article_id/comments", () => {
   test("if there are comments sends an appropriate status and comments array", () => {
     return request(app)
       .get("/api/articles/1/comments")
       .expect(200)
-      .then(({ body }) => {
-        expect(body.comments.length).toBe(11);
+      .then((response) => {
+        console.log("line 146 >> ", response.body);
+        expect(Number(response.body.comments.comment_count)).toEqual(11);
       });
   });
   test("if there are no comments sends 200 status and empty array", () => {
@@ -151,7 +152,7 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get("/api/articles/2/comments")
       .expect(200)
       .then(({ body }) => {
-        expect(body.comments).toEqual([]);
+        expect(body.comments.commentsArray).toEqual([]);
       });
   });
 
@@ -174,7 +175,7 @@ describe("GET /api/articles/:article_id/comments", () => {
 });
 
 //7
-describe("POST /api/articles/:article_id/comments", () => {
+describe(" 7 POST /api/articles/:article_id/comments", () => {
   test("POST comment, we get the 201 response", () => {
     const newComment = {
       username: "butter_bridge",
@@ -256,7 +257,7 @@ describe("POST /api/articles/:article_id/comments", () => {
 });
 
 // 8
-describe("PATCH /api/articles/:article_id", () => {
+describe(" 8 PATCH /api/articles/:article_id", () => {
   test("200: responds with updated article", () => {
     const articleUpdate = { inc_votes: 1 };
     return request(app)
@@ -335,7 +336,7 @@ describe("PATCH /api/articles/:article_id", () => {
   });
 });
 //9
-describe("DELETE /api/comments/comments_id", () => {
+describe(" 9 DELETE /api/comments/comments_id", () => {
   test("DELETE 204: deletes comment", () => {
     return request(app).delete("/api/comments/14").expect(204);
   });
@@ -359,7 +360,7 @@ describe("DELETE /api/comments/comments_id", () => {
   });
 });
 //10
-describe("GET /api/users", () => {
+describe(" 10 GET /api/users", () => {
   test("responds with status 200 and array of users", () => {
     return request(app)
       .get("/api/users")
@@ -375,27 +376,29 @@ describe("GET /api/users", () => {
   });
 });
 //11
-describe("GET /api/articles query topic", () => {
+describe("11 GET /api/articles query topic", () => {
   test("GET:200 sends an appropriate status and article array on the certain topic", () => {
     return request(app)
       .get("/api/articles?topic=cats")
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles).toHaveLength(1);
+        expect(body.articles.articles).toHaveLength(1);
 
-        body.articles.forEach((article) => {
+        body.articles.articles.forEach((article) => {
           expect(article.topic).toEqual("cats");
         });
       });
   });
   test("GET:200 sends an appropriate status and article array on the certain topic", () => {
     return request(app)
-      .get("/api/articles?topic=mitch")
+      .get("/api/articles?topic=cats")
       .expect(200)
-      .then(({ body }) => {
-        expect(body.articles).toHaveLength(12);
-        body.articles.forEach((article) => {
-          expect(article.topic).toEqual("mitch");
+      .then((response) => {
+        let articleItems = response.body.articles
+        
+        expect(Number(articleItems.total_count)).toEqual(1);
+        articleItems.articles.forEach((article) => {
+          expect(article.topic).toEqual("cats");
         });
       });
   });
@@ -408,16 +411,18 @@ describe("GET /api/articles query topic", () => {
       });
   });
 });
+
 //12
-describe("GET /api/articles/:article_id", () => {
+describe("12 GET /api/articles/:article_id", () => {
   test("GET 200 resonds with article object where coment_count is correct", () => {
     return request(app)
       .get("/api/articles/1")
       .expect(200)
-      .then(({ body }) => {
-        expect(body.article.article_id).toBe(1);
-        expect(body.article.title).toBe("Living in the shadow of a great man");
-        expect(body.article.comment_count).toBe(11);
+      .then((response) => {
+        let articleItem = response.body
+        expect(articleItem.article.article_id).toBe(1);
+        expect(articleItem.article.title).toBe("Living in the shadow of a great man");
+        expect(articleItem.article.comment_count).toBe(11);
       });
   });
 });
@@ -428,13 +433,15 @@ describe(" GET api/articles topic, sortby and order", () => {
     return request(app)
       .get("/api/articles?topic=mitch&sortby=author&order=ASC")
       .expect(200)
-      .then(({ body }) => {
-        expect(body.articles).toHaveLength(12);
-        expect(body.articles).toBeSortedBy("author", { descending: false });
-        body.articles.forEach((article) => {
+      .then((response) => {
+
+        let artItems = response.body.articles
+        expect(Number(artItems.total_count)).toEqual(12); //12
+        expect(artItems.articles).toBeSortedBy("author", { descending: false });
+        artItems.articles.forEach((article) => {
           expect(article.topic).toEqual("mitch");
         });
-        expect(body.articles[0].article_id).toBe(1);
+        expect(artItems.articles[0].article_id).toBe(1);
       });
   });
 
@@ -442,13 +449,14 @@ describe(" GET api/articles topic, sortby and order", () => {
     return request(app)
       .get("/api/articles?topic=mitch&sortby=author")
       .expect(200)
-      .then(({ body }) => {
-        expect(body.articles).toHaveLength(12);
-        expect(body.articles).toBeSortedBy("author", { descending: true });
-        body.articles.forEach((article) => {
+      .then((response) => {
+        let artItems = response.body.articles
+        expect(artItems.articles).toHaveLength(10);
+        expect(artItems.articles).toBeSortedBy("author", { descending: true });
+        artItems.articles.forEach((article) => {
           expect(article.topic).toEqual("mitch");
         });
-        expect(body.articles[0].article_id).toBe(4);
+        expect(artItems.articles[0].article_id).toBe(4);
       });
   });
 
@@ -457,7 +465,7 @@ describe(" GET api/articles topic, sortby and order", () => {
       .get("/api/articles?sortby=notvalidparam&order=ASC")
       .expect(400)
       .then(({ body }) => {
-        expect(body.message).toBe("Sort parameter does not exist");
+          expect(body.message).toBe("Sort parameter does not exist");
       });
   });
   test("GET: 400 order parameter not valid sends an appropriate message", () => {
@@ -472,10 +480,13 @@ describe(" GET api/articles topic, sortby and order", () => {
     return request(app)
       .get("/api/articles?topic=mitch&sortby=created_at")
       .expect(200)
-      .then(({ body }) => {
-        expect(body.articles).toHaveLength(12);
-        expect(body.articles).toBeSortedBy("created_at", { descending: true });
-        expect(body.articles[0].article_id).toBe(3);
+      .then((response) => {
+        let artItems = response.body.articles;
+        
+        expect(Number(artItems.total_count)).toBe(12); //total number or articles
+        expect(artItems.articles).toHaveLength(10); //pagination arts per page
+        expect(artItems.articles).toBeSortedBy("created_at", { descending: true });
+        expect(artItems.articles[0].article_id).toBe(3);
       });
   });
 });

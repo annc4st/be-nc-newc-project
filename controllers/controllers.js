@@ -50,10 +50,8 @@ exports.getArticleById = (req, res, next) => {
 };
 //5 , 11
 exports.getArticles = (req, res, next) => {
-  const topic = req.query.topic;
-  const sortby = req.query.sortby;
-  const order = req.query.order;
-  return fetchArticles(topic, sortby, order).then((articles) =>{
+  const { topic, sortby, order, limit, page } = req.query;
+  return fetchArticles(topic, sortby, order, limit, page).then((articles) =>{
       res.status(200).send({articles})
     })
     .catch((error) => {
@@ -63,14 +61,15 @@ exports.getArticles = (req, res, next) => {
 
 //6
 exports.getCommentsForArticle = (req, res, next) => {
-  const { article_id } = req.params;
+  const { article_id} = req.params;
+  const {limit, page} = req.query;
 
   return fetchArticleById(article_id)
     .then((article) => {
       if (!article) {
         return res.status(404).send({ message: "Article not found" });
       } else {
-        return selectArticleComments(article_id);
+        return selectArticleComments(article_id, limit, page);
       }
     })
     .then((comments) => {
