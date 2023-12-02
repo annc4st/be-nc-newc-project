@@ -83,7 +83,6 @@
         }
     }
   },
-
   "PATCH /api/articles/:article_id":  {
     "description": "patches votes to a certain article",
     "queries": [ ],
@@ -131,6 +130,10 @@
     "exampleResponse": {
       "topic": [{ "slug": "football", "description": "Footie!" }]
     }
+  },
+  "DELETE /api/articles/:article_id": {
+    "description": "deletes particular article and comments",
+    "queries": ["article_id"]
   }
 }
 

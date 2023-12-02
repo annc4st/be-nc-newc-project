@@ -641,6 +641,35 @@ describe("POST /api/topics", () => {
         expect(response.body.message).toBe('Topic with the same description already exists')
       });
   });
+})
 
-  
+describe.only("23 DELETE /api/articles/:article_id", () => {
+  test("1 Delete article and status 204", () => {
+    let id = 1;
+    return request(app)
+    .delete(`/api/articles/${id}`)
+    .expect(204)
+  })
+
+  test("2 Delete article and status 204", () => {
+    let id = 46544;
+    return request(app)
+    .delete(`/api/articles/${id}`)
+    .expect(404)
+    .then((response) => {
+      console.log(response)
+      expect(response.body.message).toEqual(`Article ${id} does not exist`)
+    })
+  })
+  test("3 Delete article and status 204", () => {
+    let id = 'not-id';
+    return request(app)
+    .delete(`/api/articles/${id}`)
+    .expect(400)
+    .then((response) => {
+      console.log(response)
+      expect(response.body.message).toEqual("Invalid input syntax")
+    })
+  })
+
 })
