@@ -20,15 +20,15 @@ https://nc-news-proj.onrender.com
 This API is now ready to be consumed by a Front End project, or to be queried by other APIs and applications.
 
 **The main endpoints are:**
-- > '/api' 
-- > '/api/topics'
-- > '/api/articles/:article_id'
-- > '/api/articles'
-- > '/api/articles/:article_id/comments'
-- > '/api/articles/:article_id/comments'
-- > '/api/articles/:article_id'
-- > '/api/comments/:comment_id'
-- > '/api/users'
+> '/api' 
+> '/api/topics'
+> '/api/articles/:article_id'
+> '/api/articles'
+> '/api/articles/:article_id/comments'
+> '/api/articles/:article_id/comments'
+> '/api/articles/:article_id'
+> '/api/comments/:comment_id'
+> '/api/users'
 
 The database is PSQL for this project.
 
