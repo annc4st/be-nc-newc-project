@@ -234,7 +234,6 @@ exports.updateComment = async(comment_id, inc_votes) => {
 
 //19 post article
 exports.insertArticle = async (newArticle) => {
-  
   let { title, username, body, topic, article_img_url } = newArticle;
 
   if(!article_img_url) {
