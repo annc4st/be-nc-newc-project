@@ -234,7 +234,6 @@ exports.updateComment = async(comment_id, inc_votes) => {
 
 //19 post article
 exports.insertArticle = async (newArticle) => {
-  
   let { title, username, body, topic, article_img_url } = newArticle;
 
   if(!article_img_url) {
@@ -298,3 +297,27 @@ exports.insertTopic = async (newTopic) => {
   })
 }
 }
+//23  delete article
+exports.delArticle = async (id) => {
+  try {
+    const articleExistsQuery = `SELECT * FROM articles WHERE article_id = $1`;
+    const removeQuery = `DELETE FROM articles WHERE article_id = $1`;
+
+    const articleExistsResult = await db.query(articleExistsQuery, [id]);
+    if(articleExistsResult.rows.length === 0) {
+      return Promise.reject({
+        status: 404, message: `Article ${id} does not exist`
+      })
+    }
+
+    // delete associated comments in order not to incur  error "violates foreign key constraint "comments_article_id_fkey" on table "comments""
+    const deleteCommentsQuery = `DELETE FROM comments WHERE article_id = $1`;
+    await db.query(deleteCommentsQuery, [id]);
+
+    await db.query(removeQuery, [id])
+    return { success: true };
+  } catch (error) {
+    console.error('Error removing article:', error);
+    throw error;
+  }
+};

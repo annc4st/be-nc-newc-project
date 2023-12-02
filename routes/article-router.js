@@ -1,7 +1,7 @@
 const express = require('express');
 const articleRouter = express.Router();
 const { getArticles, getArticleById, 
-    patchArticle, getCommentsForArticle, postComment, postArticle
+    patchArticle, getCommentsForArticle, postComment, postArticle, deleteArticle
 } = require('../controllers/controllers.js');
 
 articleRouter
@@ -12,7 +12,8 @@ articleRouter
 articleRouter
 .route('/:article_id')
 .get(getArticleById)
-.patch(patchArticle);
+.patch(patchArticle)
+.delete(deleteArticle);
 
 articleRouter
 .route('/:article_id/comments')

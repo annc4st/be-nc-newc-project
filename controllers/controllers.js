@@ -7,7 +7,7 @@ const {
   updateArticle, delComment, 
   fetchUsers, fetchUserByUsername, 
   updateComment,
-  insertArticle, insertTopic
+  insertArticle, insertTopic, delArticle
 } = require("../models/models.js");
 
 const fs = require("fs/promises");
@@ -218,5 +218,17 @@ exports.postTopic = (req, res, next) => {
   .catch((error) => {
     console.error("Controller - Error posting topic:", error);
     next(error);
+  })
+}
+//23 Delete Article
+exports.deleteArticle = (req, res, next) => {
+  const {article_id} = req.params;
+
+  delArticle(article_id)
+  .then(() => {
+    res.status(204).send()
+  })
+  .catch((error) => {
+    next(error)
   })
 }

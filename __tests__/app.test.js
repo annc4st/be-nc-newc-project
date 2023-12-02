@@ -143,7 +143,6 @@ describe(" 6 GET /api/articles/:article_id/comments", () => {
       .get("/api/articles/1/comments")
       .expect(200)
       .then((response) => {
-        console.log("line 146 >> ", response.body);
         expect(Number(response.body.comments.comment_count)).toEqual(11);
       });
   });
@@ -641,6 +640,32 @@ describe("POST /api/topics", () => {
         expect(response.body.message).toBe('Topic with the same description already exists')
       });
   });
+})
 
-  
+describe("23 DELETE /api/articles/:article_id", () => {
+  test("1 Delete article and status 204", () => {
+    let id = 1;
+    return request(app)
+    .delete(`/api/articles/${id}`)
+    .expect(204)
+  })
+  test("2 Delete article and status 204", () => {
+    let id = 46544;
+    return request(app)
+    .delete(`/api/articles/${id}`)
+    .expect(404)
+    .then((response) => {
+      expect(response.body.message).toEqual(`Article ${id} does not exist`)
+    })
+  })
+  test("3 Delete article and status 204", () => {
+    let id = 'not-id';
+    return request(app)
+    .delete(`/api/articles/${id}`)
+    .expect(400)
+    .then((response) => {
+      expect(response.body.message).toEqual("Invalid input syntax")
+    })
+  })
+
 })
