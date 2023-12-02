@@ -7,16 +7,28 @@ Users are able to view topics, read articles and post articles and comments.
 ### Hosted Version
 https://nc-news-proj.onrender.com
 
+
+- On this project I have practised:
+- Querying a database.
+- Using a TDD approach to cover both the happy and error paths.
+- Setting a RESTful API with a number of endpoints which cover CRUD operations.
+- Setting up parametric endpoints.
+- Handling complex queries.
+- Manipulating data to respond to client requirements.
+- Hosting your server and DB.
+
+This API is now ready to be consumed by a Front End project, or to be queried by other APIs and applications.
+
 **The main endpoints are:**
-- > '/api' 
-- > '/api/topics'
-- > '/api/articles/:article_id'
-- > '/api/articles'
-- > '/api/articles/:article_id/comments'
-- > '/api/articles/:article_id/comments'
-- > '/api/articles/:article_id'
-- > '/api/comments/:comment_id'
-- > '/api/users'
+> '/api' 
+> '/api/topics'
+> '/api/articles/:article_id'
+> '/api/articles'
+> '/api/articles/:article_id/comments'
+> '/api/articles/:article_id/comments'
+> '/api/articles/:article_id'
+> '/api/comments/:comment_id'
+> '/api/users'
 
 The database is PSQL for this project.
 
