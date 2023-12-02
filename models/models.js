@@ -298,7 +298,7 @@ exports.insertTopic = async (newTopic) => {
   })
 }
 }
-
+//23  delete article
 exports.delArticle = async (id) => {
   try {
     const articleExistsQuery = `SELECT * FROM articles WHERE article_id = $1`;
@@ -319,8 +319,6 @@ exports.delArticle = async (id) => {
     return { success: true };
   } catch (error) {
     console.error('Error removing article:', error);
-
-  // Log the error and re-throw it
     throw error;
   }
 };
