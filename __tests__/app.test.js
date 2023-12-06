@@ -103,10 +103,10 @@ describe(" 5 GET /api/articles responds with array of articles", () => {
       .get("/api/articles")
       .expect(200)
       .then((response) => {
-        // console.log("test 5-1>>", response.body.articles.total_count);
-        expect(Number(response.body.articles.total_count)).toEqual(13)
+        // console.log("test 5-1>>", response.body.total_count);
+        expect(Number(response.body.total_count)).toEqual(13)
 
-        response.body.articles.articles.forEach((article) => {
+        response.body.articles.forEach((article) => {
           expect(typeof article.article_id).toBe("number");
           expect(typeof article.title).toBe("string");
           expect(typeof article.author).toBe("string");
@@ -122,7 +122,7 @@ describe(" 5 GET /api/articles responds with array of articles", () => {
     return request(app)
       .get("/api/articles")
       .then(({ body }) => {
-        expect(body.articles.articles).toBeSortedBy("created_at", { descending: true });
+        expect(body.articles).toBeSortedBy("created_at", { descending: true });
       });
   });
 
@@ -143,7 +143,7 @@ describe(" 6 GET /api/articles/:article_id/comments", () => {
       .get("/api/articles/1/comments")
       .expect(200)
       .then((response) => {
-        expect(Number(response.body.comments.comment_count)).toEqual(11);
+        expect(Number(response.body.comment_count)).toEqual(11);
       });
   });
   test("if there are no comments sends 200 status and empty array", () => {
@@ -151,7 +151,7 @@ describe(" 6 GET /api/articles/:article_id/comments", () => {
       .get("/api/articles/2/comments")
       .expect(200)
       .then(({ body }) => {
-        expect(body.comments.commentsArray).toEqual([]);
+        expect(body.comments).toEqual([]);
       });
   });
 
@@ -381,9 +381,8 @@ describe("11 GET /api/articles query topic", () => {
       .get("/api/articles?topic=cats")
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles.articles).toHaveLength(1);
-
-        body.articles.articles.forEach((article) => {
+        expect(body.articles).toHaveLength(1);
+        body.articles.forEach((article) => {
           expect(article.topic).toEqual("cats");
         });
       });
@@ -393,8 +392,7 @@ describe("11 GET /api/articles query topic", () => {
       .get("/api/articles?topic=cats")
       .expect(200)
       .then((response) => {
-        let articleItems = response.body.articles
-        
+        let articleItems = response.body
         expect(Number(articleItems.total_count)).toEqual(1);
         articleItems.articles.forEach((article) => {
           expect(article.topic).toEqual("cats");
@@ -427,14 +425,14 @@ describe("12 GET /api/articles/:article_id", () => {
 });
 
 //15
-describe(" GET api/articles topic, sortby and order", () => {
+describe("15 GET api/articles topic, sortby and order", () => {
   test("GET:200 sends an appropriate status and article array on the certain topic sortby author and order asc", () => {
     return request(app)
       .get("/api/articles?topic=mitch&sortby=author&order=ASC")
       .expect(200)
       .then((response) => {
 
-        let artItems = response.body.articles
+        let artItems = response.body
         expect(Number(artItems.total_count)).toEqual(12); //12
         expect(artItems.articles).toBeSortedBy("author", { descending: false });
         artItems.articles.forEach((article) => {
@@ -449,7 +447,7 @@ describe(" GET api/articles topic, sortby and order", () => {
       .get("/api/articles?topic=mitch&sortby=author")
       .expect(200)
       .then((response) => {
-        let artItems = response.body.articles
+        let artItems = response.body
         expect(artItems.articles).toHaveLength(10);
         expect(artItems.articles).toBeSortedBy("author", { descending: true });
         artItems.articles.forEach((article) => {
@@ -480,7 +478,7 @@ describe(" GET api/articles topic, sortby and order", () => {
       .get("/api/articles?topic=mitch&sortby=created_at")
       .expect(200)
       .then((response) => {
-        let artItems = response.body.articles;
+        let artItems = response.body;
         
         expect(Number(artItems.total_count)).toBe(12); //total number or articles
         expect(artItems.articles).toHaveLength(10); //pagination arts per page

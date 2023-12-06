@@ -52,7 +52,7 @@ exports.getArticleById = (req, res, next) => {
 exports.getArticles = (req, res, next) => {
   const { topic, sortby, order, limit, page } = req.query;
   return fetchArticles(topic, sortby, order, limit, page).then((articles) =>{
-      res.status(200).send({articles})
+      res.status(200).send(articles)
     })
     .catch((error) => {
       next(error)
@@ -73,7 +73,7 @@ exports.getCommentsForArticle = (req, res, next) => {
       }
     })
     .then((comments) => {
-      res.status(200).send({ comments });
+      res.status(200).send(comments);
     })
     .catch((error) => {
       next(error);

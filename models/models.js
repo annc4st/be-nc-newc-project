@@ -131,7 +131,7 @@ exports.selectArticleComments = async (articleId, limit=10, page=1) => {
 
   return  {
     comment_count: commentCountResult.rows[0].comment_count,
-    commentsArray: commentsResult.rows
+    comments: commentsResult.rows
   }
    
     
